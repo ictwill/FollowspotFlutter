@@ -6,7 +6,8 @@ class ShowModel extends ChangeNotifier {
     const [
       Cue(1, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '1'),
       Cue(2, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '2'),
-      Cue(3, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '3'),
+      Cue(3, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'],
+          'Fade out with exit', '3'),
       Cue(4, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '4'),
       Cue(5, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '5'),
       Cue(6, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '6'),
@@ -53,6 +54,7 @@ class ShowModel extends ChangeNotifier {
   ];
   final Cue blank = const Cue(-1, '', '', 0, '', 0, [], '', '');
 
+  //Get a list of every cue number used in the show.
   List<double> cueNumbers() {
     Set<double> numbers = {};
     for (var cuelist in _cuelists) {

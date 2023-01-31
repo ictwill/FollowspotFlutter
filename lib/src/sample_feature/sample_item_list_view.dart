@@ -51,6 +51,7 @@ class CueListView extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) {
               final number = numbers[index];
               return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   for (int i = 0; i < spots; i++)
                     CueCardCompact(item: show.findCue(i, number))
@@ -79,6 +80,8 @@ class CueCardCompact extends StatelessWidget {
     } else {
       return Expanded(
         child: Card(
+          color: Colors.amber,
+          borderOnForeground: false,
           elevation: 4,
           clipBehavior: Clip.antiAlias,
           child: InkWell(
@@ -90,42 +93,61 @@ class CueCardCompact extends StatelessWidget {
             },
             child: Row(
               children: [
-                Container(
-                  width: 60,
-                  padding: const EdgeInsets.all(20),
-                  color: Theme.of(context).primaryColor,
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 12.0, horizontal: 16.0),
                   child: Text(item.number,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.onPrimary)),
-                ),
-                const SizedBox(width: 20),
-                Column(
-                  children: [
-                    Text(item.action),
-                    Text(item.intensity.toString()),
-                  ],
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          )),
                 ),
                 Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(item.target),
-                      Text(
-                        item.frames.toString(),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
+                  child: ColoredBox(
+                    color: Theme.of(context).cardColor,
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Column(children: [
+                              Text(item.action),
+                              const SizedBox(height: 8),
+                              Text(item.intensity.toString()),
+                            ]),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(item.target),
+                                const SizedBox(height: 8),
+                                Text(
+                                  item.frames.toString(),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                Text(item.time.toString()),
+                                const SizedBox(height: 8),
+                                Text(item.size),
+                              ],
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            if (item.notes.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(item.notes),
+                              ),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
-                Column(
-                  children: [
-                    Text(item.time.toString()),
-                    Text(item.size),
-                  ],
-                ),
-                const SizedBox(width: 20),
-                if (item.notes.isNotEmpty) Text(item.notes),
               ],
             ),
           ),
