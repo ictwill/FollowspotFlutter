@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 /// A placeholder class that represents an entity or model.
 class Cue {
   const Cue(
@@ -21,4 +23,6 @@ class Cue {
   final List<String> frames;
   final int time;
   final String notes;
+
+  Color getColor() => Colors.amber;
 }

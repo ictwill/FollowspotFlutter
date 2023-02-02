@@ -50,9 +50,34 @@ class ShowModel extends ChangeNotifier {
       Cue(41, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '39'),
       Cue(42, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '40'),
       Cue(43, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '41'),
+    ],
+    const [
+      Cue(1, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '1'),
+      Cue(2, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '2'),
+      Cue(3, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'],
+          'Fade out with exit', '3'),
+      Cue(4, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '4'),
+      Cue(5, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '5'),
+      Cue(6, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '6'),
+      Cue(7, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '7'),
+      Cue(8, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '8'),
+      Cue(9, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '9'),
+      Cue(10, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '10'),
+      Cue(11, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '11'),
+      Cue(12, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '12'),
+      Cue(13, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '13'),
+      Cue(14, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '14'),
+      Cue(15, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '15'),
+      Cue(16, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '16'),
+      Cue(17, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '17'),
+      Cue(18, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '18'),
+      Cue(19, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '19'),
+      Cue(20, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '20'),
+      Cue(21, 'Fade Up', 'Bob', 2, 'Full Body', 50, ['R132', 'L202'], '', '21'),
     ]
   ];
-  final Cue blank = const Cue(-1, '', '', 0, '', 0, [], '', '');
+  static const Cue blank = Cue(-1, '', '', 0, '', 0, [], '', '');
+  Cue currentCue = blank;
 
   //Get a list of every cue number used in the show.
   List<double> cueNumbers() {
@@ -73,6 +98,10 @@ class ShowModel extends ChangeNotifier {
       (element) => double.parse(element.number) == number,
       orElse: () => blank,
     );
+  }
+
+  void selectCue(Cue cue) {
+    currentCue = cue;
   }
 
   List<List<Cue>> get cuelists {

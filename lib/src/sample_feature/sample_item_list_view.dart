@@ -80,70 +80,97 @@ class CueCardCompact extends StatelessWidget {
     } else {
       return Expanded(
         child: Card(
-          color: Colors.amber,
           borderOnForeground: false,
           elevation: 4,
           clipBehavior: Clip.antiAlias,
           child: InkWell(
             onTap: () {
+              Provider.of<ShowModel>(context, listen: false).selectCue(item);
               Navigator.restorablePushNamed(
                 context,
                 SampleItemDetailsView.routeName,
               );
             },
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 12.0, horizontal: 16.0),
-                  child: Text(item.number,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                            color: Theme.of(context).colorScheme.onPrimary,
-                          )),
+                ColoredBox(
+                  color: item.getColor(),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 26.0, horizontal: 16.0),
+                        child: Text(item.number,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium!
+                                .copyWith(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                )),
+                      ),
+                    ],
+                  ),
                 ),
                 Expanded(
-                  child: ColoredBox(
-                    color: Theme.of(context).cardColor,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 16),
                     child: Column(
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        Table(
+                          columnWidths: const <int, TableColumnWidth>{
+                            1: FlexColumnWidth(2.0)
+                          },
                           children: [
-                            Column(children: [
-                              Text(item.action),
-                              const SizedBox(height: 8),
-                              Text(item.intensity.toString()),
-                            ]),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                            TableRow(
                               children: [
-                                Text(item.target),
-                                const SizedBox(height: 8),
+                                Text(item.action),
                                 Text(
-                                  item.frames.toString(),
+                                  item.target,
                                   textAlign: TextAlign.center,
+                                ),
+                                Text(
+                                  item.size,
+                                  textAlign: TextAlign.end,
                                 ),
                               ],
                             ),
-                            Column(
+                            TableRow(
                               children: [
-                                Text(item.time.toString()),
-                                const SizedBox(height: 8),
-                                Text(item.size),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Text('${item.intensity} %'),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Text(
+                                    item.frames.toString(),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Text(
+                                    '${item.time}  s',
+                                    textAlign: TextAlign.end,
+                                  ),
+                                ),
                               ],
                             ),
                           ],
                         ),
-                        Row(
-                          children: [
-                            if (item.notes.isNotEmpty)
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(item.notes),
-                              ),
-                          ],
-                        )
+                        if (item.notes.isNotEmpty)
+                          Row(
+                            children: [
+                              Text(item.notes),
+                            ],
+                          )
                       ],
                     ),
                   ),
