@@ -1,28 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-/// A placeholder class that represents an entity or model.
+part 'cue.g.dart';
+
+@JsonSerializable()
 class Cue {
-  const Cue(
-    this.id,
-    this.action,
-    this.target,
-    this.time,
-    this.size,
-    this.intensity,
-    this.frames,
-    this.notes,
-    this.number,
-  );
+  int id;
+  double number;
+  String action;
+  String target;
+  String size;
+  int intensity;
+  List<String> frames;
+  int time;
+  String notes;
 
-  final int id;
-  final String number;
-  final String action;
-  final String target;
-  final String size;
-  final int intensity;
-  final List<String> frames;
-  final int time;
-  final String notes;
+  Cue({
+    this.id = -1,
+    this.number = 0.0,
+    this.action = '',
+    this.target = '',
+    this.size = '',
+    this.intensity = -1,
+    this.frames = const [],
+    this.time = -1,
+    this.notes = '',
+  });
+
+  @override
+  String toString() {
+    return 'Cue $number will $action to $intensity on $target over $time seconds';
+  }
+
+  factory Cue.fromJson(Map<String, dynamic> json) => _$CueFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CueToJson(this);
 
   Color getColor() => Colors.amber;
 }

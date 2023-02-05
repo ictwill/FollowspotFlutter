@@ -1,72 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:followspot_application_1/src/models/show_model.dart';
-import 'package:followspot_application_1/src/sample_feature/sample_item_details_view.dart';
 import 'package:provider/provider.dart';
 
-import '../settings/settings_view.dart';
 import '../models/cue.dart';
+import '../models/show_model.dart';
+import 'cue_edit_view.dart';
 
-/// Displays a list of Cues.
-class CueListView extends StatelessWidget {
-  const CueListView({
-    super.key,
-  });
-
-  static const routeName = '/';
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sample Items'),
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.add)),
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              // Navigate to the settings page. If the user leaves and returns
-              // to the app after it has been killed while running in the
-              // background, the navigation stack is restored.
-              Navigator.restorablePushNamed(context, SettingsView.routeName);
-            },
-          ),
-        ],
-      ),
-
-      // To work with lists that may contain a large number of items, it’s best
-      // to use the ListView.builder constructor.
-      //
-      // In contrast to the default ListView constructor, which requires
-      // building all Widgets up front, the ListView.builder constructor lazily
-      // builds Widgets as they’re scrolled into view.
-      body: Consumer<ShowModel>(
-        builder: (context, show, child) {
-          final int spots = show.cuelists.length;
-          final List<double> numbers = show.cueNumbers();
-
-          return ListView.builder(
-            restorationId: 'sampleItemListView',
-            itemCount: numbers.length,
-            padding: const EdgeInsets.all(12.0),
-            itemBuilder: (BuildContext context, int index) {
-              final number = numbers[index];
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  for (int i = 0; i < spots; i++)
-                    CueCardCompact(item: show.findCue(i, number))
-                ],
-              );
-            },
-          );
-        },
-      ),
-    );
-  }
-}
-
-class CueCardCompact extends StatelessWidget {
-  const CueCardCompact({
+class CueCard extends StatelessWidget {
+  const CueCard({
     Key? key,
     required this.item,
   }) : super(key: key);
@@ -86,33 +26,24 @@ class CueCardCompact extends StatelessWidget {
           child: InkWell(
             onTap: () {
               Provider.of<ShowModel>(context, listen: false).selectCue(item);
-              Navigator.restorablePushNamed(
-                context,
-                SampleItemDetailsView.routeName,
-              );
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => CueEditView(cue: item)));
             },
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ColoredBox(
+                Container(
+                  width: 96.0,
+                  height: 80.0,
+                  alignment: Alignment.center,
                   color: item.getColor(),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 26.0, horizontal: 16.0),
-                        child: Text(item.number,
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium!
-                                .copyWith(
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                )),
-                      ),
-                    ],
-                  ),
+                  child: Text(deleteTrailing(item.number),
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          fontWeight: FontWeight.bold)),
                 ),
                 Expanded(
                   child: Padding(
