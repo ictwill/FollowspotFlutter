@@ -6,5 +6,9 @@ class Spot {
   List<String> frames = [];
   List<Cue> cues = [];
 
-  Spot(this.id, this.number, this.frames, this.cues);
+  Spot(
+      {required this.id,
+      required this.number,
+      required this.frames,
+      required this.cues});
 }

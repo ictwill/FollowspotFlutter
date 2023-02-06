@@ -36,14 +36,13 @@ class SpotView extends StatelessWidget {
       body: Consumer<ShowModel>(
         builder: (context, showModel, child) {
           final int spots = showModel.show.spotList.length;
-          final List<double> numbers = showModel.cueNumbers();
 
           return ListView.builder(
             restorationId: 'sampleItemListView',
-            itemCount: numbers.length,
+            itemCount: showModel.usedNumbers.length,
             padding: const EdgeInsets.all(12.0),
             itemBuilder: (BuildContext context, int index) {
-              final number = numbers[index];
+              final number = showModel.usedNumbers[index];
               return Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

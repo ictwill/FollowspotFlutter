@@ -1,28 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:followspot_application_1/src/models/cue.dart';
 import 'package:followspot_application_1/src/models/show.dart';
+import 'package:uuid/uuid.dart';
 
 import '../data/dummy_show.dart';
 
 class ShowModel extends ChangeNotifier {
   final Show show = dummyShow();
+  late List<double> usedNumbers = show.cueNumbers();
 
-  static final Cue blank = Cue(action: 'spacer');
+  final uuid = const Uuid();
+
+  static final Cue blank = Cue(id: 'blank', action: 'spacer', spot: -1);
   Cue currentCue = blank;
-
-  //Get a list of every cue number used in the show.
-  List<double> cueNumbers() {
-    Set<double> numbers = {};
-    for (var spots in show.spotList) {
-      for (var cue in spots.cues) {
-        numbers.add(cue.number);
-      }
-    }
-    final List<double> sorted = numbers.toList();
-    sorted.sort();
-
-    return sorted;
-  }
 
   Cue findCue(int int, double number) {
     return show.spotList[int].cues.firstWhere(
@@ -35,5 +25,31 @@ class ShowModel extends ChangeNotifier {
     currentCue = cue;
   }
 
-  void updateCue(Cue cue, Cue newCue) {}
+  void updateCue(int spot, Cue oldCue, Cue newCue) {
+    int index = getSpotIndex(oldCue.spot);
+    show.spotList[index].cues.removeWhere((element) => element.id == oldCue.id);
+    if (oldCue.spot != newCue.spot) index = getSpotIndex(newCue.spot);
+    addCue(index, newCue);
+    refreshSpot(index);
+  }
+
+  void refreshSpot(int index) {
+    show.spotList[index].cues.sort((a, b) => a.number.compareTo(b.number));
+    usedNumbers = show.cueNumbers();
+  }
+
+  void addCue(int index, Cue newCue) {
+    show.spotList[index].cues.add(newCue);
+    notifyListeners();
+  }
+
+  void deleteCue(Cue oldCue) {
+    int index = getSpotIndex(oldCue.spot);
+    show.spotList[index].cues.removeWhere((element) => element.id == oldCue.id);
+    refreshSpot(index);
+    notifyListeners();
+  }
+
+  int getSpotIndex(int number) =>
+      show.spotList.indexWhere((item) => item.number == number);
 }

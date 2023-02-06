@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:followspot_application_1/src/models/cue.dart';
+import 'package:uuid/uuid.dart';
 
 import '../models/show.dart';
 
@@ -9,13 +10,15 @@ Show dummyShow() {
     id: 1,
     info: ShowInfo(id: 1, date: DateTime.now()),
   );
+  var uuid = const Uuid();
 
-  for (var element in show.spotList) {
-    element.cues = List.generate(
+  for (var spot in show.spotList) {
+    spot.cues = List.generate(
       50,
       (index) => Cue(
-        id: index + 1000,
+        id: uuid.v4(),
         number: index + 1 + (Random().nextInt(10)).toDouble(),
+        spot: spot.number,
       ),
     );
   }

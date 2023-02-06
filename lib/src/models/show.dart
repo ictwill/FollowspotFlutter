@@ -5,13 +5,30 @@ class Show {
   final ShowInfo info;
   final List<Spot> spotList = List.generate(
       2,
-      (index) => Spot(index, index + 1,
-          ['R132', 'R119', 'L202', 'L203', 'L205', 'L206'], []));
+      (index) => Spot(
+          id: index,
+          number: index + 1,
+          frames: ['R132', 'R119', 'L202', 'L203', 'L205', 'L206'],
+          cues: []));
 
   Show({
     this.id = -1,
     required this.info,
   });
+
+  //Get a list of every cue number used in the show.
+  List<double> cueNumbers() {
+    Set<double> numbers = {};
+    for (var spots in spotList) {
+      for (var cue in spots.cues) {
+        numbers.add(cue.number);
+      }
+    }
+    final List<double> sorted = numbers.toList();
+    sorted.sort();
+
+    return sorted;
+  }
 }
 
 class ShowInfo {

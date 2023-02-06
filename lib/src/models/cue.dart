@@ -5,7 +5,7 @@ part 'cue.g.dart';
 
 @JsonSerializable()
 class Cue {
-  int id;
+  String id;
   double number;
   String action;
   String target;
@@ -14,9 +14,10 @@ class Cue {
   List<String> frames;
   int time;
   String notes;
+  int spot;
 
   Cue({
-    this.id = -1,
+    required this.id,
     this.number = 0.0,
     this.action = '',
     this.target = '',
@@ -25,11 +26,12 @@ class Cue {
     this.frames = const [],
     this.time = -1,
     this.notes = '',
+    required this.spot,
   });
 
   @override
   String toString() {
-    return 'Cue $number will $action to $intensity on $target over $time seconds';
+    return 'spot: $spot id: $id : Cue $number - $action @ $intensity on $target over $time seconds';
   }
 
   factory Cue.fromJson(Map<String, dynamic> json) => _$CueFromJson(json);

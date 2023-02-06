@@ -5,8 +5,9 @@ import 'package:provider/provider.dart';
 
 /// Displays detailed information about a SampleItem.
 class CueEditView extends StatefulWidget {
-  const CueEditView({super.key, required this.cue});
+  const CueEditView({super.key, required this.spot, required this.cue});
 
+  final int spot;
   final Cue cue;
 
   @override
@@ -33,6 +34,7 @@ class _CueEditViewState extends State<CueEditView> {
     intensityControl.text = widget.cue.intensity.toString();
     framesControl.text = widget.cue.frames.join(' + ');
     notesControl.text = widget.cue.notes;
+    debugPrint(widget.cue.toString());
     super.initState();
   }
 
@@ -59,6 +61,7 @@ class _CueEditViewState extends State<CueEditView> {
             title: const Text('Item Details'),
             actions: [
               IconButton(
+                  tooltip: 'Save this cue',
                   onPressed: () {
                     final Cue newCue = Cue(
                       id: widget.cue.id,
@@ -70,99 +73,119 @@ class _CueEditViewState extends State<CueEditView> {
                       intensity: int.parse(intensityControl.text),
                       frames: framesControl.text.split(' + '),
                       notes: notesControl.text,
+                      spot: widget.spot,
                     );
-                    show.updateCue(widget.cue, newCue);
+                    show.updateCue(widget.spot, widget.cue, newCue);
                     debugPrint('Saved $newCue');
+                    Navigator.pop(context);
                   },
-                  icon: const Icon(Icons.done))
+                  icon: const Icon(Icons.save)),
+              IconButton(
+                  tooltip: 'Delete this Cue',
+                  onPressed: () {
+                    show.deleteCue(widget.cue);
+                    debugPrint('DELETED Cue id ${widget.cue.id}');
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.delete))
             ],
           ),
-          body: Column(
-            children: [
-              Row(
+          body: Hero(
+            tag: widget.cue.id,
+            placeholderBuilder: (context, heroSize, child) => Card(),
+            child: Card(
+              clipBehavior: Clip.antiAlias,
+              margin: const EdgeInsets.all(16.0),
+              child: ListView(
                 children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextField(
-                          controller: numberControl,
-                          decoration: const InputDecoration(labelText: 'Cue'),
-                          textAlign: TextAlign.center),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 3,
-                    child: Table(
-                      children: [
-                        TableRow(children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextField(
-                              controller: actionControl,
-                              decoration: const InputDecoration(
-                                labelText: 'Action',
-                                prefixIcon: Icon(Icons.square),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextField(
-                                controller: targetControl,
-                                decoration:
-                                    const InputDecoration(labelText: 'Target')),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextField(
-                                controller: sizeControl,
-                                decoration:
-                                    const InputDecoration(labelText: 'Size')),
-                          ),
-                        ]),
-                        TableRow(children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextField(
-                                controller: intensityControl,
-                                decoration: const InputDecoration(
-                                    labelText: 'Intensity'),
-                                textAlign: TextAlign.center),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextField(
-                                controller: framesControl,
-                                decoration:
-                                    const InputDecoration(labelText: 'Frames')),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextField(
-                              controller: timeControl,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                              controller: numberControl,
                               decoration:
-                                  const InputDecoration(labelText: 'Time'),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ]),
-                      ],
-                    ),
-                  )
+                                  const InputDecoration(labelText: 'Cue'),
+                              textAlign: TextAlign.center),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: Table(
+                          children: [
+                            TableRow(children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextField(
+                                  controller: actionControl,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Action',
+                                    prefixIcon: Icon(Icons.square),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextField(
+                                    controller: targetControl,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Target')),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextField(
+                                    controller: sizeControl,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Size')),
+                              ),
+                            ]),
+                            TableRow(children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextField(
+                                    controller: intensityControl,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Intensity'),
+                                    textAlign: TextAlign.center),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextField(
+                                    controller: framesControl,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Frames')),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextField(
+                                  controller: timeControl,
+                                  decoration:
+                                      const InputDecoration(labelText: 'Time'),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ]),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                          child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: TextField(
+                            controller: notesControl,
+                            decoration:
+                                const InputDecoration(labelText: 'Notes')),
+                      )),
+                    ],
+                  ),
                 ],
               ),
-              Row(
-                children: [
-                  Expanded(
-                      child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: TextField(
-                        controller: notesControl,
-                        decoration: const InputDecoration(labelText: 'Notes')),
-                  )),
-                ],
-              ),
-            ],
+            ),
           ),
         );
       },
