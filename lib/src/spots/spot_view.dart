@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:followspot_application_1/src/models/show_model.dart';
 import 'package:followspot_application_1/src/spots/cue_edit_view.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 import '../settings/settings_view.dart';
 import '../models/cue.dart';
@@ -14,6 +15,7 @@ class SpotView extends StatelessWidget {
   });
 
   static const routeName = '/';
+  final uuid = const Uuid();
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,19 @@ class SpotView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Sample Items'),
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.add)),
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CueEditView(
+                        key: super.key,
+                        spot: 1,
+                        cue: Cue(id: uuid.v4(), spot: 1)),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.add)),
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {

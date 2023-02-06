@@ -27,7 +27,7 @@ class ShowModel extends ChangeNotifier {
 
   void updateCue(int spot, Cue oldCue, Cue newCue) {
     int index = getSpotIndex(oldCue.spot);
-    show.spotList[index].cues.removeWhere((element) => element.id == oldCue.id);
+    deleteCue(oldCue);
     if (oldCue.spot != newCue.spot) index = getSpotIndex(newCue.spot);
     addCue(index, newCue);
     refreshSpot(index);
@@ -36,18 +36,17 @@ class ShowModel extends ChangeNotifier {
   void refreshSpot(int index) {
     show.spotList[index].cues.sort((a, b) => a.number.compareTo(b.number));
     usedNumbers = show.cueNumbers();
+    notifyListeners();
   }
 
   void addCue(int index, Cue newCue) {
     show.spotList[index].cues.add(newCue);
-    notifyListeners();
   }
 
   void deleteCue(Cue oldCue) {
     int index = getSpotIndex(oldCue.spot);
-    show.spotList[index].cues.removeWhere((element) => element.id == oldCue.id);
+    show.spotList[index].cues.remove(oldCue);
     refreshSpot(index);
-    notifyListeners();
   }
 
   int getSpotIndex(int number) =>

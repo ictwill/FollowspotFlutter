@@ -30,8 +30,8 @@ class CueCard extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            CueEditView(spot: item.spot, cue: item)));
+                        builder: (context) => CueEditView(
+                            key: super.key, spot: item.spot, cue: item)));
               },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,

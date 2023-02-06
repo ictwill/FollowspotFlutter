@@ -98,10 +98,10 @@ class _CueEditViewState extends State<CueEditView> {
               margin: const EdgeInsets.all(16.0),
               child: ListView(
                 children: [
-                  Row(
+                  Table(
                     children: [
-                      Expanded(
-                        child: Padding(
+                      TableRow(children: [
+                        Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: TextField(
                               controller: numberControl,
@@ -109,66 +109,58 @@ class _CueEditViewState extends State<CueEditView> {
                                   const InputDecoration(labelText: 'Cue'),
                               textAlign: TextAlign.center),
                         ),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: Table(
-                          children: [
-                            TableRow(children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextField(
-                                  controller: actionControl,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Action',
-                                    prefixIcon: Icon(Icons.square),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextField(
-                                    controller: targetControl,
-                                    decoration: const InputDecoration(
-                                        labelText: 'Target')),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextField(
-                                    controller: sizeControl,
-                                    decoration: const InputDecoration(
-                                        labelText: 'Size')),
-                              ),
-                            ]),
-                            TableRow(children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextField(
-                                    controller: intensityControl,
-                                    decoration: const InputDecoration(
-                                        labelText: 'Intensity'),
-                                    textAlign: TextAlign.center),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextField(
-                                    controller: framesControl,
-                                    decoration: const InputDecoration(
-                                        labelText: 'Frames')),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextField(
-                                  controller: timeControl,
-                                  decoration:
-                                      const InputDecoration(labelText: 'Time'),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ]),
-                          ],
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                            controller: actionControl,
+                            decoration: const InputDecoration(
+                              labelText: 'Action',
+                              prefixIcon: Icon(Icons.square),
+                            ),
+                          ),
                         ),
-                      )
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                              controller: targetControl,
+                              decoration:
+                                  const InputDecoration(labelText: 'Target')),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                              controller: sizeControl,
+                              decoration:
+                                  const InputDecoration(labelText: 'Size')),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        const Spacer(),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                              controller: intensityControl,
+                              decoration:
+                                  const InputDecoration(labelText: 'Intensity'),
+                              textAlign: TextAlign.center),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                              controller: framesControl,
+                              decoration:
+                                  const InputDecoration(labelText: 'Frames')),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                            controller: timeControl,
+                            decoration:
+                                const InputDecoration(labelText: 'Time'),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ]),
                     ],
                   ),
                   Row(
