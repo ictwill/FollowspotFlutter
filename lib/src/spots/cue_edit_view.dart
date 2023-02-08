@@ -21,8 +21,8 @@ class _CueEditViewState extends State<CueEditView> {
   final timeControl = TextEditingController();
   final sizeControl = TextEditingController();
   final intensityControl = TextEditingController();
-  final framesControl = TextEditingController();
   final notesControl = TextEditingController();
+  List<String> frames = [];
 
   @override
   void initState() {
@@ -32,8 +32,10 @@ class _CueEditViewState extends State<CueEditView> {
     timeControl.text = widget.cue.time.toString();
     sizeControl.text = widget.cue.size;
     intensityControl.text = widget.cue.intensity.toString();
-    framesControl.text = widget.cue.frames.join(' + ');
     notesControl.text = widget.cue.notes;
+
+    frames.addAll(widget.cue.frames);
+
     debugPrint(widget.cue.toString());
     super.initState();
   }
@@ -47,8 +49,8 @@ class _CueEditViewState extends State<CueEditView> {
     timeControl.dispose();
     sizeControl.dispose();
     intensityControl.dispose();
-    framesControl.dispose();
     notesControl.dispose();
+
     super.dispose();
   }
 
@@ -63,20 +65,7 @@ class _CueEditViewState extends State<CueEditView> {
               IconButton(
                   tooltip: 'Save this cue',
                   onPressed: () {
-                    final Cue newCue = Cue(
-                      id: widget.cue.id,
-                      number: double.parse(numberControl.text),
-                      action: actionControl.text,
-                      target: targetControl.text,
-                      time: int.parse(timeControl.text),
-                      size: sizeControl.text,
-                      intensity: int.parse(intensityControl.text),
-                      frames: framesControl.text.split(' + '),
-                      notes: notesControl.text,
-                      spot: widget.spot,
-                    );
-                    show.updateCue(widget.spot, widget.cue, newCue);
-                    debugPrint('Saved $newCue');
+                    show.updateCue(widget.spot, widget.cue, _createCue());
                     Navigator.pop(context);
                   },
                   icon: const Icon(Icons.save)),
@@ -92,24 +81,25 @@ class _CueEditViewState extends State<CueEditView> {
           ),
           body: Hero(
             tag: widget.cue.id,
-            placeholderBuilder: (context, heroSize, child) => Card(),
             child: Card(
               clipBehavior: Clip.antiAlias,
               margin: const EdgeInsets.all(16.0),
               child: ListView(
                 children: [
-                  Table(
+                  Row(
                     children: [
-                      TableRow(children: [
-                        Padding(
+                      Expanded(
+                        child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: TextField(
+                          child: TextFormField(
                               controller: numberControl,
                               decoration:
                                   const InputDecoration(labelText: 'Cue'),
                               textAlign: TextAlign.center),
                         ),
-                        Padding(
+                      ),
+                      Expanded(
+                        child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: TextField(
                             controller: actionControl,
@@ -119,24 +109,32 @@ class _CueEditViewState extends State<CueEditView> {
                             ),
                           ),
                         ),
-                        Padding(
+                      ),
+                      Expanded(
+                        child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: TextField(
                               controller: targetControl,
                               decoration:
                                   const InputDecoration(labelText: 'Target')),
                         ),
-                        Padding(
+                      ),
+                      Expanded(
+                        child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: TextField(
                               controller: sizeControl,
                               decoration:
                                   const InputDecoration(labelText: 'Size')),
                         ),
-                      ]),
-                      TableRow(children: [
-                        const Spacer(),
-                        Padding(
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Text(''),
+                      Expanded(
+                        child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: TextField(
                               controller: intensityControl,
@@ -144,14 +142,34 @@ class _CueEditViewState extends State<CueEditView> {
                                   const InputDecoration(labelText: 'Intensity'),
                               textAlign: TextAlign.center),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextField(
-                              controller: framesControl,
-                              decoration:
-                                  const InputDecoration(labelText: 'Frames')),
-                        ),
-                        Padding(
+                      ),
+                      Expanded(
+                        child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: show
+                                  .getFrameList(widget.cue)
+                                  .map((e) => Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: FilterChip(
+                                          label: Text(e),
+                                          selected: frames.contains(e),
+                                          onSelected: (value) {
+                                            setState(() {
+                                              if (value) {
+                                                frames.add(e);
+                                              } else {
+                                                frames.remove(e);
+                                              }
+                                            });
+                                          },
+                                        ),
+                                      ))
+                                  .toList(),
+                            )),
+                      ),
+                      Expanded(
+                        child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: TextField(
                             controller: timeControl,
@@ -160,19 +178,20 @@ class _CueEditViewState extends State<CueEditView> {
                             textAlign: TextAlign.center,
                           ),
                         ),
-                      ]),
+                      ),
                     ],
                   ),
                   Row(
                     children: [
                       Expanded(
-                          child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: TextField(
-                            controller: notesControl,
-                            decoration:
-                                const InputDecoration(labelText: 'Notes')),
-                      )),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: TextField(
+                              controller: notesControl,
+                              decoration:
+                                  const InputDecoration(labelText: 'Notes')),
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -183,15 +202,31 @@ class _CueEditViewState extends State<CueEditView> {
       },
     );
   }
+
+  Cue _createCue() {
+    final Cue newCue = Cue(
+      id: widget.cue.id,
+      number: double.parse(numberControl.text),
+      action: actionControl.text,
+      target: targetControl.text,
+      time: int.parse(timeControl.text),
+      size: sizeControl.text,
+      intensity: int.parse(intensityControl.text),
+      frames: frames,
+      notes: notesControl.text,
+      spot: widget.spot,
+    );
+    return newCue;
+  }
 }
 
 String deleteTrailing(double number) {
   var string = number.toString();
   while (string.endsWith('0') && string.contains('.0')) {
-    string = dropLast(string);
-    if (string.endsWith('.')) return dropLast(string);
+    string = _dropLast(string);
+    if (string.endsWith('.')) return _dropLast(string);
   }
   return string;
 }
 
-String dropLast(string) => string.substring(0, string.length - 1);
+String _dropLast(string) => string.substring(0, string.length - 1);

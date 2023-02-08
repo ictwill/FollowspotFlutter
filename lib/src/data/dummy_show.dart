@@ -17,8 +17,9 @@ Show dummyShow() {
       50,
       (index) => Cue(
         id: uuid.v4(),
-        number: index + 1 + (Random().nextInt(10)).toDouble(),
+        number: (index + 1).toDouble(),
         spot: spot.number,
+        target: spot.number.toString(),
       ),
     );
   }

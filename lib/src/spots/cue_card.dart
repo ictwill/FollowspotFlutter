@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../models/cue.dart';
-import '../models/show_model.dart';
 import 'cue_edit_view.dart';
 
 class CueCard extends StatelessWidget {
@@ -79,13 +77,14 @@ class CueCard extends StatelessWidget {
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 8.0),
-                                    child: Text('${item.intensity} %'),
+                                    child:
+                                        Text(validateIntensity(item.intensity)),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 8.0),
                                     child: Text(
-                                      item.frames.toString(),
+                                      item.frames.join(' + '),
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
@@ -93,7 +92,7 @@ class CueCard extends StatelessWidget {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 8.0),
                                     child: Text(
-                                      '${item.time}  s',
+                                      validateTime(time: item.time),
                                       textAlign: TextAlign.end,
                                     ),
                                   ),
@@ -119,4 +118,10 @@ class CueCard extends StatelessWidget {
       );
     }
   }
+
+  String validateIntensity(int? intensity) =>
+      intensity != null && intensity >= 0 ? '${item.intensity} %' : '';
+
+  String validateTime({int? time}) =>
+      time != null && time >= 0 ? '${item.intensity} s' : '';
 }

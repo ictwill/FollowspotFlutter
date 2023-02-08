@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:followspot_application_1/src/models/cue.dart';
 import 'package:followspot_application_1/src/models/show.dart';
 import 'package:uuid/uuid.dart';
@@ -14,8 +15,8 @@ class ShowModel extends ChangeNotifier {
   static final Cue blank = Cue(id: 'blank', action: 'spacer', spot: -1);
   Cue currentCue = blank;
 
-  Cue findCue(int int, double number) {
-    return show.spotList[int].cues.firstWhere(
+  Cue findCue(int spot, double number) {
+    return show.spotList[spot].cues.firstWhere(
       (element) => element.number == number,
       orElse: () => blank,
     );
@@ -34,7 +35,7 @@ class ShowModel extends ChangeNotifier {
   }
 
   void refreshSpot(int index) {
-    show.spotList[index].cues.sort((a, b) => a.number.compareTo(b.number));
+    // show.spotList[index].cues.sort((a, b) => a.number.compareTo(b.number));
     usedNumbers = show.cueNumbers();
     notifyListeners();
   }
@@ -45,10 +46,15 @@ class ShowModel extends ChangeNotifier {
 
   void deleteCue(Cue oldCue) {
     int index = getSpotIndex(oldCue.spot);
+    debugPrint(show.spotList[index].cues.length.toString());
     show.spotList[index].cues.remove(oldCue);
+    debugPrint(show.spotList[index].cues.length.toString());
     refreshSpot(index);
   }
 
   int getSpotIndex(int number) =>
-      show.spotList.indexWhere((item) => item.number == number);
+      show.spotList.indexWhere((spot) => spot.number == number);
+
+  List<String> getFrameList(Cue cue) =>
+      show.spotList[getSpotIndex(cue.spot)].frames;
 }
