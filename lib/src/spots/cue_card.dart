@@ -77,8 +77,8 @@ class CueCard extends StatelessWidget {
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 8.0),
-                                    child:
-                                        Text(validateIntensity(item.intensity)),
+                                    child: Text(
+                                        '${validateIntensity(intensity: item.intensity)} %'),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
@@ -92,7 +92,7 @@ class CueCard extends StatelessWidget {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 8.0),
                                     child: Text(
-                                      validateTime(time: item.time),
+                                      '${validateTime(time: item.time)} ct',
                                       textAlign: TextAlign.end,
                                     ),
                                   ),
@@ -118,10 +118,9 @@ class CueCard extends StatelessWidget {
       );
     }
   }
-
-  String validateIntensity(int? intensity) =>
-      intensity != null && intensity >= 0 ? '${item.intensity} %' : '';
-
-  String validateTime({int? time}) =>
-      time != null && time >= 0 ? '${item.intensity} s' : '';
 }
+
+String validateIntensity({int? intensity}) =>
+    intensity != null && intensity >= 0 ? '$intensity' : '0';
+
+String validateTime({int? time}) => time != null && time >= 0 ? '$time' : '0';

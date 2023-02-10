@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:followspot_application_1/src/models/show_model.dart';
+import 'package:followspot_application_1/src/screens/pdf_preview_screen.dart';
 import 'package:followspot_application_1/src/spots/cue_edit_view.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -30,6 +31,13 @@ class SpotView extends StatelessWidget {
               // to the app after it has been killed while running in the
               // background, the navigation stack is restored.
               Navigator.restorablePushNamed(context, SettingsView.routeName);
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.print),
+            onPressed: () {
+              Navigator.restorablePushNamed(
+                  context, PdfPreviewScreen.routeName);
             },
           ),
         ],

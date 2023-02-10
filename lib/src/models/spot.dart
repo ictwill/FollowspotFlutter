@@ -11,4 +11,11 @@ class Spot {
       required this.number,
       required this.frames,
       required this.cues});
+
+  Cue findCue(double number) {
+    return cues.firstWhere(
+      (element) => element.number == number,
+      orElse: () => Cue(id: 'blank', spot: this.number),
+    );
+  }
 }

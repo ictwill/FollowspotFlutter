@@ -10,9 +10,9 @@ class Cue {
   String action;
   String target;
   String size;
-  int intensity;
+  int? intensity;
   List<String> frames;
-  int time;
+  int? time;
   String notes;
   int spot;
 
@@ -22,9 +22,9 @@ class Cue {
     this.action = '',
     this.target = '',
     this.size = '',
-    this.intensity = -1,
+    this.intensity,
     this.frames = const [],
-    this.time = -1,
+    this.time,
     this.notes = '',
     required this.spot,
   });
@@ -39,4 +39,6 @@ class Cue {
   Map<String, dynamic> toJson() => _$CueToJson(this);
 
   Color getColor() => Colors.amber;
+
+  String getFrames() => this.frames.join(' + ');
 }

@@ -8,7 +8,12 @@ import '../models/show.dart';
 Show dummyShow() {
   Show show = Show(
     id: 1,
-    info: ShowInfo(id: 1, date: DateTime.now()),
+    info: ShowInfo(
+        id: 1,
+        date: DateTime.now(),
+        title: 'The Curious Incident of the Dog in the Nighttime',
+        ld: 'Allison Alligator',
+        ald: 'Kirby Kangaroo'),
   );
   var uuid = const Uuid();
 
@@ -17,9 +22,9 @@ Show dummyShow() {
       50,
       (index) => Cue(
         id: uuid.v4(),
-        number: (index + 1).toDouble(),
+        number: (index + 1 + Random().nextInt(4)).toDouble(),
         spot: spot.number,
-        target: spot.number.toString(),
+        target: 'Cinderella',
       ),
     );
   }

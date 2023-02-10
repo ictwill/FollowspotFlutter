@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:followspot_application_1/src/models/cue.dart';
 import 'package:followspot_application_1/src/models/show_model.dart';
+import 'package:followspot_application_1/src/spots/cue_card.dart';
 import 'package:provider/provider.dart';
 
 /// Displays detailed information about a SampleItem.
@@ -29,9 +30,9 @@ class _CueEditViewState extends State<CueEditView> {
     numberControl.text = deleteTrailing(widget.cue.number);
     actionControl.text = widget.cue.action;
     targetControl.text = widget.cue.target;
-    timeControl.text = widget.cue.time.toString();
+    timeControl.text = validateTime(time: widget.cue.time);
     sizeControl.text = widget.cue.size;
-    intensityControl.text = widget.cue.intensity.toString();
+    intensityControl.text = validateIntensity(intensity: widget.cue.intensity);
     notesControl.text = widget.cue.notes;
 
     frames.addAll(widget.cue.frames);
