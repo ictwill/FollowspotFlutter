@@ -7,20 +7,26 @@ import 'package:pdf/widgets.dart' as pw;
 
 import '../models/show.dart';
 
-Future<Uint8List> makePdf(PdfPageFormat pageFormat, Show show) async {
+Future<Uint8List> makePdf(
+    PdfPageFormat pageFormat, Show show, int indexSpot) async {
   final numbers = show.cueNumbers();
   final pdf = pw.Document();
   pdf.addPage(
     pw.MultiPage(
       pageFormat: pageFormat,
-      header: (context) => _showHeader(show),
+      header: (context) => _showHeader(show: show, indexSpot: indexSpot),
       build: (pw.Context context) {
         return numbers.map((e) {
           return pw.Row(
             children: [
-              for (int i = 0; i < show.spotList.length; i++)
+              if (indexSpot == -1)
+                for (int i = 0; i < show.spotList.length; i++)
+                  pw.Expanded(
+                    child: PrintCompactCard(show.spotList[i].findCue(e)),
+                  )
+              else
                 pw.Expanded(
-                  child: PrintCard(show.spotList[i].findCue(e)),
+                  child: PrintWideCard(show.spotList[indexSpot].findCue(e)),
                 )
             ],
           );
@@ -37,7 +43,7 @@ Future<Uint8List> makePdf(PdfPageFormat pageFormat, Show show) async {
   return await pdf.save();
 }
 
-pw.Column _showHeader(Show show) {
+pw.Column _showHeader({required Show show, required int indexSpot}) {
   return pw.Column(children: [
     pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [
       pw.Text(show.info.ld, softWrap: false),
@@ -55,25 +61,33 @@ pw.Column _showHeader(Show show) {
       pw.Text(''),
     ]),
     pw.SizedBox(height: 12),
+    pw.Divider(thickness: .1),
     pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceAround, children: [
-      for (int i = 0; i < show.spotList.length; i++)
-        pw.Column(children: [
-          pw.Text('Spot ${show.spotList[i].number}',
-              textAlign: pw.TextAlign.center),
-          pw.Row(
-            children: show.spotList[i].frames
-                .map((e) => pw.Text(' $e ', textScaleFactor: 0.7))
-                .toList(),
-          )
-        ])
-    ])
+      if (indexSpot == -1)
+        for (int i = 0; i < show.spotList.length; i++) SpotHeader(show, i)
+      else
+        SpotHeader(show, indexSpot)
+    ]),
+    pw.Divider(thickness: .1),
   ]);
 }
 
-class PrintCard extends pw.StatelessWidget {
+pw.Column SpotHeader(Show show, int i) {
+  return pw.Column(children: [
+    pw.Text('Spot ${show.spotList[i].number}', textAlign: pw.TextAlign.center),
+    pw.Row(
+      children: show.spotList[i].frames
+          .map((e) => pw.Text(' $e ', textScaleFactor: 0.7))
+          .toList(),
+    ),
+  ]);
+}
+
+///Card Printable Widget for a cue in a column
+class PrintCompactCard extends pw.StatelessWidget {
   final Cue cue;
 
-  PrintCard(this.cue);
+  PrintCompactCard(this.cue);
 
   @override
   pw.Widget build(pw.Context context) {
@@ -81,7 +95,7 @@ class PrintCard extends pw.StatelessWidget {
       return pw.Spacer();
     } else {
       return pw.Container(
-        decoration: pw.BoxDecoration(border: pw.Border.all()),
+        decoration: pw.BoxDecoration(border: pw.Border.all(width: .1)),
         child: pw.Row(children: [
           pw.SizedBox(width: 1.0),
           pw.Container(
@@ -96,21 +110,73 @@ class PrintCard extends pw.StatelessWidget {
           ),
           pw.Expanded(
               child: pw.Container(
-                  padding: const pw.EdgeInsets.symmetric(
-                      vertical: 4.0, horizontal: 8.0),
-                  child: pw.Table(children: [
-                    pw.TableRow(children: [
-                      pw.Text(cue.action),
-                      pw.Text(cue.target, textAlign: pw.TextAlign.center),
-                      pw.Text(cue.size, textAlign: pw.TextAlign.right),
-                    ]),
-                    pw.TableRow(children: [
-                      pw.Text(validateIntensity(intensity: cue.intensity)),
-                      pw.Text(cue.getFrames(), textAlign: pw.TextAlign.center),
-                      pw.Text(validateTime(time: cue.time),
-                          textAlign: pw.TextAlign.right),
-                    ])
-                  ])))
+            padding:
+                const pw.EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+            child: pw.Table(children: [
+              pw.TableRow(children: [
+                pw.Row(mainAxisSize: pw.MainAxisSize.min, children: [
+                  pw.Text(cue.action),
+                ]),
+                pw.Text(cue.target, textAlign: pw.TextAlign.center),
+                pw.Text(cue.size, textAlign: pw.TextAlign.right),
+              ]),
+              pw.TableRow(children: [
+                pw.Text('${validateIntensity(intensity: cue.intensity)} %'),
+                pw.Text(cue.getFrames(), textAlign: pw.TextAlign.center),
+                pw.Text('${validateTime(time: cue.time)} ct',
+                    textAlign: pw.TextAlign.right),
+              ])
+            ]),
+          ))
+        ]),
+      );
+    }
+  }
+}
+
+///Card Printable Widget for a cue in a column
+class PrintWideCard extends pw.StatelessWidget {
+  final Cue cue;
+
+  PrintWideCard(this.cue);
+
+  @override
+  pw.Widget build(pw.Context context) {
+    if (cue.id == 'blank') {
+      return pw.SizedBox(height: 24);
+    } else {
+      return pw.Container(
+        decoration: pw.BoxDecoration(border: pw.Border.all(width: .1)),
+        child: pw.Row(children: [
+          pw.SizedBox(width: 1.0),
+          pw.Container(
+            decoration: pw.BoxDecoration(
+              color: PdfColor.fromInt(cue.getColor().value),
+            ),
+            height: 24,
+            width: 32,
+            alignment: pw.Alignment.center,
+            child: pw.Text(deleteTrailing(cue.number),
+                textAlign: pw.TextAlign.center),
+          ),
+          pw.Expanded(
+              child: pw.Container(
+            padding:
+                const pw.EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+            child: pw.Table(children: [
+              pw.TableRow(children: [
+                pw.Row(mainAxisSize: pw.MainAxisSize.min, children: [
+                  pw.Text(cue.action),
+                ]),
+                pw.Text(cue.target, textAlign: pw.TextAlign.center),
+                pw.Text(cue.size, textAlign: pw.TextAlign.right),
+                pw.Text('${validateIntensity(intensity: cue.intensity)} %'),
+                pw.Text(cue.getFrames(), textAlign: pw.TextAlign.center),
+                pw.Text('${validateTime(time: cue.time)} ct',
+                    textAlign: pw.TextAlign.right),
+              ])
+            ]),
+          ))
         ]),
       );
     }
