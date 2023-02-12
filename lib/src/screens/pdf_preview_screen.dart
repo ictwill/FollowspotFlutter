@@ -16,7 +16,7 @@ class PdfPreviewScreen extends StatefulWidget {
 }
 
 class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
-  final PdfPageFormat pageFormat = PdfPageFormat.a4;
+  PdfPageFormat pageFormat = PdfPageFormat.letter;
   int selectedSpotindex = -1;
 
   @override
@@ -61,7 +61,13 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
         ),
       ),
       body: PdfPreview(
-        build: (format) => makePdf(pageFormat, widget.show, selectedSpotindex),
+        initialPageFormat: pageFormat,
+        onPageFormatChanged: (value) {
+          setState(() {
+            pageFormat = value;
+          });
+        },
+        build: (format) => makePdf(format, widget.show, selectedSpotindex),
       ),
     );
   }
