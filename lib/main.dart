@@ -19,32 +19,26 @@ void main() async {
   // This prevents a sudden theme change when the app is first displayed.
   await settingsController.loadSettings();
 
-  setupWindow();
+  await setupWindow();
 
   // Run the app and pass in the SettingsController. The app listens to the
   // SettingsController for changes, then passes it further down to the
   // SettingsView.
   runApp(
     ChangeNotifierProvider(
-        create: (context) => ShowModel(),
-        child: MyApp(settingsController: settingsController)),
+      create: (context) => ShowModel(),
+      child: MyApp(settingsController: settingsController),
+    ),
   );
 }
 
 const double windowWidth = 640;
 const double windowHeight = 320;
 
-void setupWindow() {
+setupWindow() {
   if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
     WidgetsFlutterBinding.ensureInitialized();
     setWindowTitle('Follow');
     setWindowMinSize(const Size(windowWidth, windowHeight));
-    // getCurrentScreen().then((screen) {
-    //   setWindowFrame(Rect.fromCenter(
-    //     center: screen!.frame.center,
-    //     width: windowWidth,
-    //     height: windowHeight,
-    //   ));
-    // });
   }
 }

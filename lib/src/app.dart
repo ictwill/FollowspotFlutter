@@ -57,8 +57,7 @@ class MyApp extends StatelessWidget {
                   case SpotView.routeName:
                   default:
                     return SpotView(
-                      key: super.key,
-                    );
+                        key: super.key, settings: settingsController);
                 }
               },
             );
