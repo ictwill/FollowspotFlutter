@@ -1,8 +1,14 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:followspot_application_1/src/models/show.dart';
+import 'package:followspot_application_1/src/models/show_model.dart';
 import 'package:followspot_application_1/src/screens/pdf_preview_screen.dart';
 import 'package:followspot_application_1/src/settings/settings_controller.dart';
 import 'package:followspot_application_1/src/settings/settings_view.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 import 'models/cue.dart';
@@ -61,9 +67,11 @@ class MenuEntry {
 
 class MyMenuBar extends StatefulWidget {
   final SettingsController settings;
-  final int spots;
 
-  const MyMenuBar({required this.settings, super.key, required this.spots});
+  const MyMenuBar({
+    required this.settings,
+    super.key,
+  });
 
   @override
   State<MyMenuBar> createState() => _MyMenuBarState();
@@ -81,19 +89,21 @@ class _MyMenuBarState extends State<MyMenuBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Expanded(
-          child: MenuBar(
-            children: MenuEntry.build(_getMenus()),
+    return Consumer<ShowModel>(builder: (context, showModel, child) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Expanded(
+            child: MenuBar(
+              children: MenuEntry.build(_getMenus(showModel: showModel)),
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 
-  List<MenuEntry> _getMenus() {
+  List<MenuEntry> _getMenus({required ShowModel showModel}) {
     final List<MenuEntry> result = <MenuEntry>[
       //File Menu
       MenuEntry(
@@ -120,8 +130,13 @@ class _MyMenuBarState extends State<MyMenuBar> {
           //Save File
           MenuEntry(
             label: 'Save',
-            onPressed: () {
-              debugPrint('Save Show to previous file');
+            onPressed: () async {
+              if (showModel.show.filename.isNotEmpty) {
+                File file = File(showModel.show.filename);
+                file.writeAsString(
+                    showModel.show.info.title + DateTime.now().toString());
+                await file.create();
+              }
             },
             shortcut:
                 const SingleActivator(LogicalKeyboardKey.keyS, control: true),
@@ -129,8 +144,24 @@ class _MyMenuBarState extends State<MyMenuBar> {
           //Save as
           MenuEntry(
             label: 'Save As..',
-            onPressed: () {
-              debugPrint('Save asselected');
+            onPressed: () async {
+              String? outputFile = await FilePicker.platform.saveFile(
+                dialogTitle: 'Please select an output file:',
+                fileName: '${showModel.show.info.title}.csv',
+              );
+
+              if (outputFile == null) {
+                // User canceled the picker
+              } else {
+                File file = File(outputFile);
+                file.writeAsString(
+                    showModel.show.info.title + DateTime.now().toString());
+
+                file.create(recursive: true);
+                showModel.show.filename = outputFile;
+              }
+
+              debugPrint('Save as selected');
             },
             shortcut: const SingleActivator(LogicalKeyboardKey.keyS,
                 control: true, shift: true),
@@ -168,28 +199,28 @@ class _MyMenuBarState extends State<MyMenuBar> {
         label: 'Edit',
         menuChildren: <MenuEntry>[
           MenuEntry(label: 'New Cue', menuChildren: [
-            if (widget.spots > 0)
+            if (showModel.show.spotList.isNotEmpty)
               MenuEntry(
                 label: 'Spot 1',
                 shortcut: const SingleActivator(LogicalKeyboardKey.digit1,
                     control: true),
                 onPressed: () => navigateNewCue(context, 1),
               ),
-            if (widget.spots > 1)
+            if (showModel.show.spotList.length > 1)
               MenuEntry(
                 label: 'Spot 2',
                 shortcut: const SingleActivator(LogicalKeyboardKey.digit2,
                     control: true),
                 onPressed: () => navigateNewCue(context, 2),
               ),
-            if (widget.spots > 2)
+            if (showModel.show.spotList.length > 2)
               MenuEntry(
                 label: 'Spot 3',
                 shortcut: const SingleActivator(LogicalKeyboardKey.digit3,
                     control: true),
                 onPressed: () => navigateNewCue(context, 3),
               ),
-            if (widget.spots > 3)
+            if (showModel.show.spotList.length > 3)
               MenuEntry(
                 label: 'Spot 4',
                 shortcut: const SingleActivator(LogicalKeyboardKey.digit4,

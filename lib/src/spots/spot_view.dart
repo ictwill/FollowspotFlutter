@@ -34,7 +34,7 @@ class SpotView extends StatelessWidget {
           return Scaffold(
             body: Column(
               children: [
-                MyMenuBar(settings: settings, spots: spots),
+                MyMenuBar(settings: settings),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
