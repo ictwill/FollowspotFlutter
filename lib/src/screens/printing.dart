@@ -15,6 +15,16 @@ Future<Uint8List> makePdf(
     pw.MultiPage(
       pageFormat: pageFormat,
       header: (context) => _showHeader(show: show, indexSpot: indexSpot),
+      footer: (pw.Context context) {
+        return pw.Container(
+            alignment: pw.Alignment.bottomRight,
+            margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
+            child: pw.Text(
+                'Page ${context.pageNumber} of ${context.pagesCount}',
+                style: pw.Theme.of(context)
+                    .defaultTextStyle
+                    .copyWith(color: PdfColors.grey)));
+      },
       build: (pw.Context context) {
         return numbers.map((e) {
           return pw.Row(

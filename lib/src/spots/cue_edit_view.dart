@@ -59,6 +59,32 @@ class _CueEditViewState extends State<CueEditView> {
   Widget build(BuildContext context) {
     return Consumer<ShowModel>(
       builder: (BuildContext context, show, Widget? child) {
+        var cueTextFields = [
+          TextFormField(
+              autofocus: true,
+              controller: numberControl,
+              decoration: const InputDecoration(labelText: 'Cue')),
+          TextField(
+              controller: actionControl,
+              decoration: const InputDecoration(
+                labelText: 'Action',
+                prefixIcon: Icon(Icons.square),
+              )),
+          TextField(
+              controller: targetControl,
+              decoration: const InputDecoration(labelText: 'Target')),
+          TextField(
+              controller: sizeControl,
+              decoration: const InputDecoration(labelText: 'Size')),
+          TextField(
+              controller: intensityControl,
+              decoration: const InputDecoration(labelText: 'Intensity'),
+              textAlign: TextAlign.center),
+          TextField(
+              controller: timeControl,
+              decoration: const InputDecoration(labelText: 'Time'),
+              textAlign: TextAlign.center),
+        ];
         return Scaffold(
           appBar: AppBar(
             title: const Text('Item Details'),
@@ -104,113 +130,51 @@ class _CueEditViewState extends State<CueEditView> {
             clipBehavior: Clip.antiAlias,
             margin: const EdgeInsets.all(16.0),
             child: ListView(
+              padding: const EdgeInsets.all(24.0),
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextFormField(
-                            controller: numberControl,
-                            decoration: const InputDecoration(labelText: 'Cue'),
-                            textAlign: TextAlign.center),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextField(
-                          controller: actionControl,
-                          decoration: const InputDecoration(
-                            labelText: 'Action',
-                            prefixIcon: Icon(Icons.square),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextField(
-                            controller: targetControl,
-                            decoration:
-                                const InputDecoration(labelText: 'Target')),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextField(
-                            controller: sizeControl,
-                            decoration:
-                                const InputDecoration(labelText: 'Size')),
-                      ),
-                    ),
-                  ],
+                GridView(
+                  padding: const EdgeInsets.all(8.0),
+                  shrinkWrap: true,
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                      mainAxisSpacing: 24,
+                      crossAxisSpacing: 24,
+                      maxCrossAxisExtent: 340,
+                      childAspectRatio: 3),
+                  children: cueTextFields,
                 ),
-                Row(
-                  children: [
-                    const Text(''),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextField(
-                            controller: intensityControl,
-                            decoration:
-                                const InputDecoration(labelText: 'Intensity'),
-                            textAlign: TextAlign.center),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: show
-                                .getFrameList(widget.cue)
-                                .map((e) => Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: FilterChip(
-                                        label: Text(e),
-                                        selected: frames.contains(e),
-                                        onSelected: (value) {
-                                          setState(() {
-                                            if (value) {
-                                              frames.add(e);
-                                            } else {
-                                              frames.remove(e);
-                                            }
-                                          });
-                                        },
-                                      ),
-                                    ))
-                                .toList(),
-                          )),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextField(
-                          controller: timeControl,
-                          decoration: const InputDecoration(labelText: 'Time'),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  ],
+                Center(
+                  child: Wrap(
+                    spacing: 16,
+                    children: show
+                        .getFrameList(widget.cue.spot)
+                        .map((e) => Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 4.0),
+                              child: FilterChip(
+                                focusNode: FocusNode(skipTraversal: true),
+                                selectedColor: Theme.of(context).primaryColor,
+                                padding: const EdgeInsets.all(4.0),
+                                label: Text(
+                                    '${show.getFrameList(widget.cue.spot).indexOf(e) + 1} : $e'),
+                                labelPadding: const EdgeInsets.all(8.0),
+                                selected: frames.contains(e),
+                                onSelected: (value) {
+                                  setState(() {
+                                    if (value) {
+                                      frames.add(e);
+                                    } else {
+                                      frames.remove(e);
+                                    }
+                                  });
+                                },
+                              ),
+                            ))
+                        .toList(),
+                  ),
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: TextField(
-                            controller: notesControl,
-                            decoration:
-                                const InputDecoration(labelText: 'Notes')),
-                      ),
-                    ),
-                  ],
-                ),
+                TextField(
+                    controller: notesControl,
+                    decoration: const InputDecoration(labelText: 'Notes')),
               ],
             ),
           ),

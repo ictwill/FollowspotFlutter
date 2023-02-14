@@ -12,6 +12,7 @@ import '../models/cue.dart';
 import '../my_menu_bar.dart';
 import '../settings/settings_view.dart';
 import 'cue_card.dart';
+import 'status_bar.dart';
 
 /// Displays a list of Cues.
 class SpotView extends StatelessWidget {
@@ -29,6 +30,7 @@ class SpotView extends StatelessWidget {
       builder: (context, showModel, child) {
         final int spots = showModel.show.spotList.length;
         if (isDesktop) {
+          //Desktop Scaffold with MenuBar and StatusBar
           return Scaffold(
             body: Column(
               children: [
@@ -95,10 +97,12 @@ class SpotView extends StatelessWidget {
                     ),
                   ),
                 ),
+                const StatusBar()
               ],
             ),
           );
         } else {
+          //Mobile Layout with AppBar
           return Scaffold(
             appBar: AppBar(
               title: Text(showModel.show.info.title),

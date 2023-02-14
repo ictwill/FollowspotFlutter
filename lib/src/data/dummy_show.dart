@@ -7,6 +7,7 @@ import '../models/show.dart';
 
 Show dummyShow() {
   Show show = Show(
+    filename: 'dummyshowtest',
     id: 1,
     info: ShowInfo(
         id: 1,

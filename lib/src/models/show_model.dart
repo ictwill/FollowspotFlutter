@@ -55,6 +55,6 @@ class ShowModel extends ChangeNotifier {
   int getSpotIndex(int number) =>
       show.spotList.indexWhere((spot) => spot.number == number);
 
-  List<String> getFrameList(Cue cue) =>
-      show.spotList[getSpotIndex(cue.spot)].frames;
+  List<String> getFrameList(int spot) =>
+      show.spotList[getSpotIndex(spot)].frames;
 }
