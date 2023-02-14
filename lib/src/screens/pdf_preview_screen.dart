@@ -4,6 +4,8 @@ import 'package:followspot_application_1/src/screens/printing.dart';
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 
+import '../settings/settings_view.dart';
+
 class PdfPreviewScreen extends StatefulWidget {
   const PdfPreviewScreen({super.key, required this.show});
 
@@ -61,12 +63,24 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
         ),
       ),
       body: PdfPreview(
+        pdfFileName: '${widget.show.filename}.pdf',
         initialPageFormat: pageFormat,
         onPageFormatChanged: (value) {
           setState(() {
             pageFormat = value;
           });
         },
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              // Navigate to the settings page. If the user leaves and returns
+              // to the app after it has been killed while running in the
+              // background, the navigation stack is restored.
+              Navigator.restorablePushNamed(context, SettingsView.routeName);
+            },
+          ),
+        ],
         build: (format) => makePdf(format, widget.show, selectedSpotindex),
       ),
     );

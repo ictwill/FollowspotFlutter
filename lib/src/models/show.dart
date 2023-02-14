@@ -1,6 +1,7 @@
 import 'spot.dart';
 
 class Show {
+  String filename;
   final int id;
   final ShowInfo info;
   final List<Spot> spotList = List.generate(
@@ -12,6 +13,7 @@ class Show {
           cues: []));
 
   Show({
+    this.filename = '',
     this.id = -1,
     required this.info,
   });
