@@ -63,140 +63,155 @@ class _CueEditViewState extends State<CueEditView> {
           appBar: AppBar(
             title: const Text('Item Details'),
             actions: [
-              IconButton(
-                  tooltip: 'Save this cue',
-                  onPressed: () {
-                    show.updateCue(widget.spot, widget.cue, _createCue());
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(Icons.save)),
-              IconButton(
-                  tooltip: 'Delete this Cue',
-                  onPressed: () {
-                    show.deleteCue(widget.cue);
-                    debugPrint('DELETED Cue id ${widget.cue.id}');
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(Icons.delete))
-            ],
-          ),
-          body: Hero(
-            tag: widget.cue.id,
-            child: Card(
-              clipBehavior: Clip.antiAlias,
-              margin: const EdgeInsets.all(16.0),
-              child: ListView(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextFormField(
-                              controller: numberControl,
-                              decoration:
-                                  const InputDecoration(labelText: 'Cue'),
-                              textAlign: TextAlign.center),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextField(
-                            controller: actionControl,
-                            decoration: const InputDecoration(
-                              labelText: 'Action',
-                              prefixIcon: Icon(Icons.square),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextField(
-                              controller: targetControl,
-                              decoration:
-                                  const InputDecoration(labelText: 'Target')),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextField(
-                              controller: sizeControl,
-                              decoration:
-                                  const InputDecoration(labelText: 'Size')),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      const Text(''),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextField(
-                              controller: intensityControl,
-                              decoration:
-                                  const InputDecoration(labelText: 'Intensity'),
-                              textAlign: TextAlign.center),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              children: show
-                                  .getFrameList(widget.cue)
-                                  .map((e) => Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: FilterChip(
-                                          label: Text(e),
-                                          selected: frames.contains(e),
-                                          onSelected: (value) {
-                                            setState(() {
-                                              if (value) {
-                                                frames.add(e);
-                                              } else {
-                                                frames.remove(e);
-                                              }
-                                            });
-                                          },
-                                        ),
-                                      ))
-                                  .toList(),
-                            )),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextField(
-                            controller: timeControl,
-                            decoration:
-                                const InputDecoration(labelText: 'Time'),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: TextField(
-                              controller: notesControl,
-                              decoration:
-                                  const InputDecoration(labelText: 'Notes')),
-                        ),
-                      ),
-                    ],
-                  ),
+              ElevatedButton(
+                onPressed: () {
+                  show.updateCue(widget.spot, widget.cue, _createCue());
+                  Navigator.pop(context);
+                },
+                child: const Text('Save'),
+              ),
+              PopupMenuButton<int>(
+                onSelected: (item) {
+                  switch (item) {
+                    case 0:
+                      show.deleteCue(widget.cue);
+                      debugPrint('DELETED Cue id ${widget.cue.id}');
+                      Navigator.pop(context);
+                  }
+                },
+                itemBuilder: (context) => [
+                  const PopupMenuItem<int>(value: 0, child: Text('Delete')),
                 ],
               ),
+              // TextButton(
+              //   onPressed: () {
+              //     show.deleteCue(widget.cue);
+              //     debugPrint('DELETED Cue id ${widget.cue.id}');
+              //     Navigator.pop(context);
+              //   },
+              //   child: Row(
+              //     mainAxisSize: MainAxisSize.min,
+              //     children: const [
+              //       Icon(Icons.delete),
+              //       SizedBox(width: 8.0),
+              //       Text('Delete')
+              //     ],
+              //   ),
+              // ),
+            ],
+          ),
+          body: Card(
+            clipBehavior: Clip.antiAlias,
+            margin: const EdgeInsets.all(16.0),
+            child: ListView(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextFormField(
+                            controller: numberControl,
+                            decoration: const InputDecoration(labelText: 'Cue'),
+                            textAlign: TextAlign.center),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextField(
+                          controller: actionControl,
+                          decoration: const InputDecoration(
+                            labelText: 'Action',
+                            prefixIcon: Icon(Icons.square),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextField(
+                            controller: targetControl,
+                            decoration:
+                                const InputDecoration(labelText: 'Target')),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextField(
+                            controller: sizeControl,
+                            decoration:
+                                const InputDecoration(labelText: 'Size')),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Text(''),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextField(
+                            controller: intensityControl,
+                            decoration:
+                                const InputDecoration(labelText: 'Intensity'),
+                            textAlign: TextAlign.center),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: show
+                                .getFrameList(widget.cue)
+                                .map((e) => Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: FilterChip(
+                                        label: Text(e),
+                                        selected: frames.contains(e),
+                                        onSelected: (value) {
+                                          setState(() {
+                                            if (value) {
+                                              frames.add(e);
+                                            } else {
+                                              frames.remove(e);
+                                            }
+                                          });
+                                        },
+                                      ),
+                                    ))
+                                .toList(),
+                          )),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextField(
+                          controller: timeControl,
+                          decoration: const InputDecoration(labelText: 'Time'),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: TextField(
+                            controller: notesControl,
+                            decoration:
+                                const InputDecoration(labelText: 'Notes')),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         );

@@ -38,8 +38,9 @@ class MyApp extends StatelessWidget {
           onGenerateTitle: (BuildContext context) =>
               AppLocalizations.of(context)!.appTitle,
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
-          ),
+              canvasColor: Colors.grey.shade200,
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey)
+                  .copyWith(secondary: Colors.amber)),
           darkTheme: ThemeData.dark(),
           themeMode: settingsController.themeMode,
           // Define a function to handle named routes in order to support

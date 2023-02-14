@@ -32,40 +32,67 @@ class SpotView extends StatelessWidget {
           return Scaffold(
             body: Column(
               children: [
-                MyMenuBar(settings: settings),
+                MyMenuBar(settings: settings, spots: spots),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     for (int i = 0; i < spots; i++)
-                      Column(
-                        children: [
-                          Text(
-                            'Spot ${i + 1}',
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
-                          OutlinedButton(
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12.0, vertical: 4.0),
+                          child: ElevatedButton(
+                            autofocus: true,
                             onPressed: () => navigateNewCue(context, i + 1),
-                            child: const Text('New Cue'),
+                            child: Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'Spot ${i + 1}',
+                                    textScaleFactor: 1.7,
+                                  ),
+                                  const Text('Add Cue'),
+                                ],
+                              ),
+                            ),
                           ),
-                        ],
+                        ),
                       )
                   ],
                 ),
                 Expanded(
-                  child: ListView.builder(
-                    restorationId: 'spotListView',
-                    itemCount: showModel.usedNumbers.length,
-                    padding: const EdgeInsets.all(12.0),
-                    itemBuilder: (BuildContext context, int index) {
-                      final number = showModel.usedNumbers[index];
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          for (int i = 0; i < spots; i++)
-                            CueCard(item: showModel.findCue(i, number))
+                  child: ShaderMask(
+                    shaderCallback: (Rect rect) {
+                      return LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Theme.of(context).canvasColor,
+                          Colors.transparent,
+                          Colors.transparent,
+                          Theme.of(context).canvasColor,
                         ],
-                      );
+                        stops: const [0.0, 0.025, 0.975, 1.0],
+                      ).createShader(rect);
                     },
+                    blendMode: BlendMode.dstOut,
+                    child: ListView.builder(
+                      findChildIndexCallback: (key) {},
+                      restorationId: 'spotListView',
+                      itemCount: showModel.usedNumbers.length,
+                      padding: const EdgeInsets.all(12.0),
+                      itemBuilder: (BuildContext context, int index) {
+                        final number = showModel.usedNumbers[index];
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            for (int i = 0; i < spots; i++)
+                              CueCard(item: showModel.findCue(i, number))
+                          ],
+                        );
+                      },
+                    ),
                   ),
                 ),
               ],
@@ -141,14 +168,10 @@ class SpotView extends StatelessWidget {
   }
 
   Future<dynamic> navigateNewCue(BuildContext context, int spot) =>
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => CueEditView(
-            key: super.key,
-            spot: spot,
-            cue: Cue(id: uuid.v4(), spot: spot),
-          ),
-        ),
+      showModalBottomSheet<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return CueEditView(spot: spot, cue: Cue(id: uuid.v4(), spot: spot));
+        },
       );
 }

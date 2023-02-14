@@ -3,6 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:followspot_application_1/src/screens/pdf_preview_screen.dart';
 import 'package:followspot_application_1/src/settings/settings_controller.dart';
 import 'package:followspot_application_1/src/settings/settings_view.dart';
+import 'package:uuid/uuid.dart';
+
+import 'models/cue.dart';
+import 'spots/cue_edit_view.dart';
 
 /// A class for consolidating the definition of menu entries.
 ///
@@ -57,8 +61,9 @@ class MenuEntry {
 
 class MyMenuBar extends StatefulWidget {
   final SettingsController settings;
+  final int spots;
 
-  const MyMenuBar({required this.settings, super.key});
+  const MyMenuBar({required this.settings, super.key, required this.spots});
 
   @override
   State<MyMenuBar> createState() => _MyMenuBarState();
@@ -90,9 +95,46 @@ class _MyMenuBarState extends State<MyMenuBar> {
 
   List<MenuEntry> _getMenus() {
     final List<MenuEntry> result = <MenuEntry>[
+      //File Menu
       MenuEntry(
         label: 'File',
         menuChildren: <MenuEntry>[
+          //New Show
+          MenuEntry(
+            label: 'New Show',
+            onPressed: () {
+              debugPrint('New Show selected');
+            },
+            shortcut: const SingleActivator(LogicalKeyboardKey.keyN,
+                control: true, shift: true),
+          ),
+          //Open File
+          MenuEntry(
+            label: 'Open',
+            onPressed: () {
+              debugPrint('Open File selected');
+            },
+            shortcut:
+                const SingleActivator(LogicalKeyboardKey.keyO, control: true),
+          ),
+          //Save File
+          MenuEntry(
+            label: 'Save',
+            onPressed: () {
+              debugPrint('Save Show to previous file');
+            },
+            shortcut:
+                const SingleActivator(LogicalKeyboardKey.keyS, control: true),
+          ),
+          //Save as
+          MenuEntry(
+            label: 'Save As..',
+            onPressed: () {
+              debugPrint('Save asselected');
+            },
+            shortcut: const SingleActivator(LogicalKeyboardKey.keyS,
+                control: true, shift: true),
+          ),
           //Print Preview
           MenuEntry(
             label: 'Print Preview',
@@ -125,6 +167,36 @@ class _MyMenuBarState extends State<MyMenuBar> {
       MenuEntry(
         label: 'Edit',
         menuChildren: <MenuEntry>[
+          MenuEntry(label: 'New Cue', menuChildren: [
+            if (widget.spots > 0)
+              MenuEntry(
+                label: 'Spot 1',
+                shortcut: const SingleActivator(LogicalKeyboardKey.digit1,
+                    control: true),
+                onPressed: () => navigateNewCue(context, 1),
+              ),
+            if (widget.spots > 1)
+              MenuEntry(
+                label: 'Spot 2',
+                shortcut: const SingleActivator(LogicalKeyboardKey.digit2,
+                    control: true),
+                onPressed: () => navigateNewCue(context, 2),
+              ),
+            if (widget.spots > 2)
+              MenuEntry(
+                label: 'Spot 3',
+                shortcut: const SingleActivator(LogicalKeyboardKey.digit3,
+                    control: true),
+                onPressed: () => navigateNewCue(context, 3),
+              ),
+            if (widget.spots > 3)
+              MenuEntry(
+                label: 'Spot 4',
+                shortcut: const SingleActivator(LogicalKeyboardKey.digit4,
+                    control: true),
+                onPressed: () => navigateNewCue(context, 4),
+              ),
+          ]),
           MenuEntry(
             label: 'Settings',
             onPressed: () {
@@ -185,4 +257,13 @@ class _MyMenuBarState extends State<MyMenuBar> {
         ShortcutRegistry.of(context).addAll(MenuEntry.shortcuts(result));
     return result;
   }
+
+  Future<dynamic> navigateNewCue(BuildContext context, int spot) =>
+      showModalBottomSheet<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return CueEditView(
+              spot: spot, cue: Cue(id: const Uuid().v4(), spot: spot));
+        },
+      );
 }
