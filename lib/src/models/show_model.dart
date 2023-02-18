@@ -1,13 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:followspot_application_1/src/data/dummy_show.dart';
 import 'package:followspot_application_1/src/models/cue.dart';
 import 'package:followspot_application_1/src/models/show.dart';
+import 'package:followspot_application_1/src/models/spot.dart';
 import 'package:uuid/uuid.dart';
 
-import '../data/dummy_show.dart';
-
 class ShowModel extends ChangeNotifier {
-  final Show show = dummyShow();
+  Show show = dummyShow();
   late List<double> usedNumbers = show.cueNumbers();
 
   final uuid = const Uuid();
@@ -57,4 +59,34 @@ class ShowModel extends ChangeNotifier {
 
   List<String> getFrameList(int spot) =>
       show.spotList[getSpotIndex(spot)].frames;
+
+  void closeShow() {
+    show = Show(info: ShowInfo(date: DateTime.now()));
+    notifyListeners();
+  }
+
+  void newShow() {
+    show = Show(
+      info: ShowInfo(date: DateTime.now()),
+      spotList: [
+        Spot(id: 0, number: 1, frames: [], cues: []),
+        Spot(id: 1, number: 2, frames: [], cues: []),
+      ],
+    );
+    notifyListeners();
+  }
+
+  void getDummyShow() {
+    show = dummyShow();
+    notifyListeners();
+  }
+
+  void openShow(String showFromFile) async {
+    Map<String, dynamic> valueMap = await jsonDecode(showFromFile);
+    show = Show.fromJson(valueMap);
+
+    usedNumbers = show.cueNumbers();
+
+    notifyListeners();
+  }
 }

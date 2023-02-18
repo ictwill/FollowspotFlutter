@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:followspot_application_1/src/data/dummy_show.dart';
 import 'package:followspot_application_1/src/models/show.dart';
 import 'package:followspot_application_1/src/models/show_model.dart';
 import 'package:followspot_application_1/src/screens/pdf_preview_screen.dart';
@@ -113,6 +115,7 @@ class _MyMenuBarState extends State<MyMenuBar> {
           MenuEntry(
             label: 'New Show',
             onPressed: () {
+              showModel.newShow();
               debugPrint('New Show selected');
             },
             shortcut: const SingleActivator(LogicalKeyboardKey.keyN,
@@ -121,7 +124,16 @@ class _MyMenuBarState extends State<MyMenuBar> {
           //Open File
           MenuEntry(
             label: 'Open',
-            onPressed: () {
+            onPressed: () async {
+              FilePickerResult? result = await FilePicker.platform.pickFiles(
+                  allowMultiple: false, dialogTitle: 'Open a Show File');
+              if (result != null) {
+                // User
+                File file = File(result.files.single.path!);
+                String data = await file.readAsString();
+
+                showModel.openShow(data);
+              }
               debugPrint('Open File selected');
             },
             shortcut:
@@ -133,8 +145,8 @@ class _MyMenuBarState extends State<MyMenuBar> {
             onPressed: () async {
               if (showModel.show.filename.isNotEmpty) {
                 File file = File(showModel.show.filename);
-                file.writeAsString(
-                    showModel.show.info.title + DateTime.now().toString());
+                file.writeAsString(jsonEncode(showModel.show.toJson()));
+
                 await file.create();
               }
             },
@@ -147,15 +159,14 @@ class _MyMenuBarState extends State<MyMenuBar> {
             onPressed: () async {
               String? outputFile = await FilePicker.platform.saveFile(
                 dialogTitle: 'Please select an output file:',
-                fileName: '${showModel.show.info.title}.csv',
+                fileName: '${showModel.show.info.title}.fws',
               );
 
               if (outputFile == null) {
                 // User canceled the picker
               } else {
                 File file = File(outputFile);
-                file.writeAsString(
-                    showModel.show.info.title + DateTime.now().toString());
+                file.writeAsString(jsonEncode(showModel.show.toJson()));
 
                 file.create(recursive: true);
                 showModel.show.filename = outputFile;
@@ -193,6 +204,16 @@ class _MyMenuBarState extends State<MyMenuBar> {
               });
             },
           ),
+          MenuEntry(
+              label: 'Close Show',
+              onPressed: () {
+                showModel.closeShow();
+              }),
+          MenuEntry(
+              label: 'Dummy Show',
+              onPressed: () {
+                showModel.getDummyShow();
+              }),
         ],
       ),
       MenuEntry(

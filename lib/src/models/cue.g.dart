@@ -12,12 +12,12 @@ Cue _$CueFromJson(Map<String, dynamic> json) => Cue(
       action: json['action'] as String? ?? '',
       target: json['target'] as String? ?? '',
       size: json['size'] as String? ?? '',
-      intensity: json['intensity'] as int? ?? -1,
+      intensity: json['intensity'] as int?,
       frames: (json['frames'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           const [],
-      time: json['time'] as int? ?? -1,
+      time: json['time'] as int?,
       notes: json['notes'] as String? ?? '',
       spot: json['spot'] as int,
     );

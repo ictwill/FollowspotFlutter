@@ -28,41 +28,41 @@ class SpotView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ShowModel>(
       builder: (context, showModel, child) {
-        final int spots = showModel.show.spotList.length;
         if (isDesktop) {
           //Desktop Scaffold with MenuBar and StatusBar
           return Scaffold(
             body: Column(
               children: [
                 MyMenuBar(settings: settings),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    for (int i = 0; i < spots; i++)
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12.0, vertical: 4.0),
-                          child: ElevatedButton(
-                            autofocus: true,
-                            onPressed: () => navigateNewCue(context, i + 1),
-                            child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'Spot ${i + 1}',
-                                    textScaleFactor: 1.7,
-                                  ),
-                                  const Text('Add Cue'),
-                                ],
+                if (showModel.show.spotList.isNotEmpty)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      for (int i = 0; i < showModel.show.spotList.length; i++)
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 4.0),
+                            child: ElevatedButton(
+                              autofocus: true,
+                              onPressed: () => navigateNewCue(context, i + 1),
+                              child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      'Spot ${i + 1}',
+                                      textScaleFactor: 1.7,
+                                    ),
+                                    const Text('Add Cue'),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      )
-                  ],
-                ),
+                        )
+                    ],
+                  ),
                 Expanded(
                   child: ShaderMask(
                     shaderCallback: (Rect rect) {
@@ -89,7 +89,9 @@ class SpotView extends StatelessWidget {
                         return Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            for (int i = 0; i < spots; i++)
+                            for (int i = 0;
+                                i < showModel.show.spotList.length;
+                                i++)
                               CueCard(item: showModel.findCue(i, number))
                           ],
                         );
@@ -97,6 +99,9 @@ class SpotView extends StatelessWidget {
                     ),
                   ),
                 ),
+                if (showModel.show.spotList.isEmpty)
+                  const Expanded(
+                      child: Text('Open a Show or Start a New Show')),
                 const StatusBar()
               ],
             ),
@@ -131,7 +136,7 @@ class SpotView extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    for (int i = 0; i < spots; i++)
+                    for (int i = 0; i < showModel.show.spotList.length; i++)
                       Column(
                         children: [
                           Text(
@@ -156,7 +161,9 @@ class SpotView extends StatelessWidget {
                       return Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          for (int i = 0; i < spots; i++)
+                          for (int i = 0;
+                              i < showModel.show.spotList.length;
+                              i++)
                             CueCard(item: showModel.findCue(i, number))
                         ],
                       );

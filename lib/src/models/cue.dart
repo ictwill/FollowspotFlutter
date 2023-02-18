@@ -40,5 +40,5 @@ class Cue {
 
   Color getColor() => Colors.amber;
 
-  String getFrames() => this.frames.join(' + ');
+  String getFrames() => frames.join(' + ');
 }
