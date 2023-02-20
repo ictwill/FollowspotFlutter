@@ -13,7 +13,11 @@ Show _$ShowFromJson(Map<String, dynamic> json) => Show(
       spotList: (json['spotList'] as List<dynamic>?)
               ?.map((e) => Spot.fromJson(e as Map<String, dynamic>))
               .toList() ??
-          const [],
+          const <Spot>[],
+      maneuverList: (json['actionList'] as List<dynamic>?)
+              ?.map((e) => Maneuver.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const <Maneuver>[],
     );
 
 Map<String, dynamic> _$ShowToJson(Show instance) => <String, dynamic>{
@@ -21,6 +25,7 @@ Map<String, dynamic> _$ShowToJson(Show instance) => <String, dynamic>{
       'id': instance.id,
       'info': instance.info.toJson(),
       'spotList': instance.spotList.map((e) => e.toJson()).toList(),
+      'actionList': instance.maneuverList.map((e) => e.toJson()).toList(),
     };
 
 ShowInfo _$ShowInfoFromJson(Map<String, dynamic> json) => ShowInfo(

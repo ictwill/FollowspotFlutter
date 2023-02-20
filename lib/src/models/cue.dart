@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:followspot_application_1/src/models/maneuver.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'cue.g.dart';
@@ -7,7 +8,7 @@ part 'cue.g.dart';
 class Cue {
   String id;
   double number;
-  String action;
+  Maneuver? maneuver;
   String target;
   String size;
   int? intensity;
@@ -19,7 +20,7 @@ class Cue {
   Cue({
     required this.id,
     this.number = 0.0,
-    this.action = '',
+    this.maneuver,
     this.target = '',
     this.size = '',
     this.intensity,
@@ -31,14 +32,13 @@ class Cue {
 
   @override
   String toString() {
-    return 'spot: $spot id: $id : Cue $number - $action @ $intensity on $target over $time seconds';
+    return 'spot: $spot id: $id : Cue $number - $maneuver : '
+        ' @ $intensity on $target over $time seconds';
   }
 
   factory Cue.fromJson(Map<String, dynamic> json) => _$CueFromJson(json);
 
   Map<String, dynamic> toJson() => _$CueToJson(this);
-
-  Color getColor() => Colors.amber;
 
   String getFrames() => frames.join(' + ');
 }

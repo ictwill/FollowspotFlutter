@@ -1,41 +1,43 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:followspot_application_1/src/models/cue.dart';
-import 'package:followspot_application_1/src/spots/cue_card.dart';
-import 'package:followspot_application_1/src/spots/cue_edit_view.dart';
+import 'package:followspot_application_1/src/screens/spots/cue_card.dart';
+import 'package:followspot_application_1/src/screens/spots/cue_edit_view.dart';
+import 'package:flutter/material.dart' as mt;
 import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
+import 'package:pdf/widgets.dart';
 
 import '../models/show.dart';
 
 Future<Uint8List> makePdf(
     PdfPageFormat pageFormat, Show show, int indexSpot) async {
+  final pageTheme = await myPageTheme(pageFormat);
+
   final numbers = show.cueNumbers();
-  final pdf = pw.Document();
+  final pdf = Document();
   pdf.addPage(
-    pw.MultiPage(
-      pageFormat: pageFormat,
+    MultiPage(
+      pageTheme: pageTheme,
       header: (context) => _showHeader(show: show, indexSpot: indexSpot),
-      footer: (pw.Context context) {
-        return pw.Container(
-            alignment: pw.Alignment.bottomRight,
-            margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
-            child: pw.Text(
-                'Page ${context.pageNumber} of ${context.pagesCount}',
-                style: pw.Theme.of(context)
+      footer: (Context context) {
+        return Container(
+            alignment: Alignment.bottomRight,
+            margin: const EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
+            child: Text('Page ${context.pageNumber} of ${context.pagesCount}',
+                style: Theme.of(context)
                     .defaultTextStyle
                     .copyWith(color: PdfColors.grey)));
       },
-      build: (pw.Context context) {
+      build: (Context context) {
         return numbers.map((e) {
-          return pw.Row(
+          return Row(
             children: [
               if (indexSpot == -1)
                 for (int i = 0; i < show.spotList.length; i++)
-                  pw.Expanded(
+                  Expanded(
                     child: PrintCompactCard(show.spotList[i].findCue(e)),
                   )
               else
-                pw.Expanded(
+                Expanded(
                   child: PrintWideCard(show.spotList[indexSpot].findCue(e)),
                 )
             ],
@@ -53,88 +55,94 @@ Future<Uint8List> makePdf(
   return await pdf.save();
 }
 
-pw.Column _showHeader({required Show show, required int indexSpot}) {
-  return pw.Column(children: [
-    pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [
-      pw.Text(show.info.ld, softWrap: false),
-      pw.FittedBox(
-          fit: pw.BoxFit.fitWidth,
-          child: pw.Text(show.info.title, textAlign: pw.TextAlign.center)),
-      pw.Text(
+Column _showHeader({required Show show, required int indexSpot}) {
+  return Column(children: [
+    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      Text(show.info.ld, softWrap: false),
+      FittedBox(
+          fit: BoxFit.fitWidth,
+          child: Text(show.info.title, textAlign: TextAlign.center)),
+      Text(
           '${show.info.date.year}/${show.info.date.month}/${show.info.date.day}',
-          textAlign: pw.TextAlign.right),
+          textAlign: TextAlign.right),
     ]),
-    pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [
-      pw.Text(show.info.ald, softWrap: false),
-      pw.Text(show.info.location,
-          softWrap: false, textAlign: pw.TextAlign.right),
-      pw.Text(''),
+    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      Text(show.info.ald, softWrap: false),
+      Text(show.info.location, softWrap: false, textAlign: TextAlign.right),
+      Text(''),
     ]),
-    pw.SizedBox(height: 12),
-    pw.Divider(thickness: .1),
-    pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceAround, children: [
+    SizedBox(height: 12),
+    Divider(thickness: .1),
+    Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
       if (indexSpot == -1)
         for (int i = 0; i < show.spotList.length; i++) SpotHeader(show, i)
       else
         SpotHeader(show, indexSpot)
     ]),
-    pw.Divider(thickness: .1),
+    Divider(thickness: .1),
   ]);
 }
 
-pw.Column SpotHeader(Show show, int i) {
-  return pw.Column(children: [
-    pw.Text('Spot ${show.spotList[i].number}', textAlign: pw.TextAlign.center),
-    pw.Row(
+Column SpotHeader(Show show, int i) {
+  return Column(children: [
+    Text('Spot ${show.spotList[i].number}', textAlign: TextAlign.center),
+    Row(
       children: show.spotList[i].frames
-          .map((e) => pw.Text(' $e ', textScaleFactor: 0.7))
+          .map((e) => Text(' $e ', textScaleFactor: 0.7))
           .toList(),
     ),
   ]);
 }
 
 ///Card Printable Widget for a cue in a column
-class PrintCompactCard extends pw.StatelessWidget {
+class PrintCompactCard extends StatelessWidget {
   final Cue cue;
 
   PrintCompactCard(this.cue);
 
   @override
-  pw.Widget build(pw.Context context) {
+  Widget build(Context context) {
     if (cue.id == 'blank') {
-      return pw.Spacer();
+      return Spacer();
     } else {
-      return pw.Container(
-        decoration: pw.BoxDecoration(border: pw.Border.all(width: .1)),
-        child: pw.Row(children: [
-          pw.SizedBox(width: 1.0),
-          pw.Container(
-            decoration: pw.BoxDecoration(
-              color: PdfColor.fromInt(cue.getColor().value),
+      return Container(
+        decoration: BoxDecoration(border: Border.all(width: .1)),
+        child: Row(children: [
+          SizedBox(width: 1.0),
+          Container(
+            decoration: BoxDecoration(
+              color: PdfColor.fromInt(cue.maneuver?.color ?? 0xFF777777),
             ),
             height: 34,
             width: 32,
-            alignment: pw.Alignment.center,
-            child: pw.Text(deleteTrailing(cue.number),
-                textAlign: pw.TextAlign.center),
+            alignment: Alignment.center,
+            child:
+                Text(deleteTrailing(cue.number), textAlign: TextAlign.center),
           ),
-          pw.Expanded(
-              child: pw.Container(
-            padding:
-                const pw.EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-            child: pw.Table(children: [
-              pw.TableRow(children: [
-                pw.Row(mainAxisSize: pw.MainAxisSize.min, children: [
-                  pw.Text(cue.action),
+          Expanded(
+              child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+            child: Table(children: [
+              TableRow(children: [
+                Row(mainAxisSize: MainAxisSize.min, children: [
+                  if (cue.maneuver?.icon != null)
+                    Icon(
+                      IconData(cue.maneuver?.icon?.codePoint ??
+                          mt.Icons.square.codePoint),
+                      color:
+                          PdfColor.fromInt(cue.maneuver?.color ?? 0x00000000),
+                      size: 18,
+                    ),
+                  Text(cue.maneuver?.name ?? '-'),
                 ]),
-                pw.Text(cue.target, textAlign: pw.TextAlign.center),
-                pw.Text(cue.size, textAlign: pw.TextAlign.right),
+                Text(cue.target, textAlign: TextAlign.center),
+                Text(cue.size, textAlign: TextAlign.right),
               ]),
-              pw.TableRow(children: [
-                pw.Text('${validateIntensity(intensity: cue.intensity)} %'),
-                pw.Text(cue.getFrames(), textAlign: pw.TextAlign.center),
-                pw.Text('${validateTime(time: cue.time)} ct',
-                    textAlign: pw.TextAlign.right),
+              TableRow(children: [
+                Text('${validateIntensity(intensity: cue.intensity)} %'),
+                Text(cue.getFrames(), textAlign: TextAlign.center),
+                Text('${validateTime(time: cue.time)} ct',
+                    textAlign: TextAlign.right),
               ])
             ]),
           ))
@@ -145,45 +153,53 @@ class PrintCompactCard extends pw.StatelessWidget {
 }
 
 ///Card Printable Widget for a cue in a column
-class PrintWideCard extends pw.StatelessWidget {
+class PrintWideCard extends StatelessWidget {
   final Cue cue;
 
   PrintWideCard(this.cue);
 
   @override
-  pw.Widget build(pw.Context context) {
+  Widget build(Context context) {
     if (cue.id == 'blank') {
-      return pw.SizedBox(height: 24);
+      return SizedBox(height: 24);
     } else {
-      return pw.Container(
-        decoration: pw.BoxDecoration(border: pw.Border.all(width: .1)),
-        child: pw.Row(children: [
-          pw.SizedBox(width: 1.0),
-          pw.Container(
-            decoration: pw.BoxDecoration(
-              color: PdfColor.fromInt(cue.getColor().value),
+      return Container(
+        decoration: BoxDecoration(border: Border.all(width: .1)),
+        child: Row(children: [
+          SizedBox(width: 1.0),
+          Container(
+            decoration: BoxDecoration(
+              color: PdfColor.fromInt(cue.maneuver?.color ?? 0xFF777777),
             ),
             height: 24,
             width: 32,
-            alignment: pw.Alignment.center,
-            child: pw.Text(deleteTrailing(cue.number),
-                textAlign: pw.TextAlign.center),
+            alignment: Alignment.center,
+            child:
+                Text(deleteTrailing(cue.number), textAlign: TextAlign.center),
           ),
-          pw.Expanded(
-              child: pw.Container(
-            padding:
-                const pw.EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-            child: pw.Table(children: [
-              pw.TableRow(children: [
-                pw.Row(mainAxisSize: pw.MainAxisSize.min, children: [
-                  pw.Text(cue.action),
+          Expanded(
+              child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+            child: Table(children: [
+              TableRow(children: [
+                Row(mainAxisSize: MainAxisSize.min, children: [
+                  if (cue.maneuver?.icon != null)
+                    Icon(
+                      //TODO: Fix Material Icon access from inside
+                      IconData(cue.maneuver?.icon?.codePoint ??
+                          mt.Icons.square.codePoint),
+                      color:
+                          PdfColor.fromInt(cue.maneuver?.color ?? 0x00000000),
+                      size: 18,
+                    ),
+                  Text(cue.maneuver?.name ?? '-'),
                 ]),
-                pw.Text(cue.target, textAlign: pw.TextAlign.center),
-                pw.Text(cue.size, textAlign: pw.TextAlign.right),
-                pw.Text('${validateIntensity(intensity: cue.intensity)} %'),
-                pw.Text(cue.getFrames(), textAlign: pw.TextAlign.center),
-                pw.Text('${validateTime(time: cue.time)} ct',
-                    textAlign: pw.TextAlign.right),
+                Text(cue.target, textAlign: TextAlign.center),
+                Text(cue.size, textAlign: TextAlign.right),
+                Text('${validateIntensity(intensity: cue.intensity)} %'),
+                Text(cue.getFrames(), textAlign: TextAlign.center),
+                Text('${validateTime(time: cue.time)} ct',
+                    textAlign: TextAlign.right),
               ])
             ]),
           ))
@@ -191,4 +207,17 @@ class PrintWideCard extends pw.StatelessWidget {
       );
     }
   }
+}
+
+Future<PageTheme> myPageTheme(PdfPageFormat format) async {
+  final materialIcons =
+      await rootBundle.load('assets/fonts/MaterialIcons-Regular.ttf');
+
+  final materialIconsTtf = Font.ttf(materialIcons);
+  return PageTheme(
+    pageFormat: format,
+    theme: ThemeData.withFont(
+      icons: materialIconsTtf,
+    ),
+  );
 }

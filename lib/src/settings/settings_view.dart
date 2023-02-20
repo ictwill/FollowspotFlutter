@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:followspot_application_1/src/screens/pdf_preview_screen.dart';
+import 'package:pdf/pdf.dart';
 
 import 'settings_controller.dart';
 
@@ -15,6 +17,20 @@ class SettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final leftController = TextEditingController();
+    final topController = TextEditingController();
+    final rightController = TextEditingController();
+    final bottomController = TextEditingController();
+
+    leftController.text =
+        '${controller.pageFormat.marginLeft / PdfPageFormat.inch}';
+    topController.text =
+        '${controller.pageFormat.marginTop / PdfPageFormat.inch}';
+    rightController.text =
+        '${controller.pageFormat.marginRight / PdfPageFormat.inch}';
+    bottomController.text =
+        '${controller.pageFormat.marginBottom / PdfPageFormat.inch}';
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -53,11 +69,37 @@ class SettingsView extends StatelessWidget {
               ],
             ),
             const Divider(),
+            TextField(
+              controller: topController,
+              decoration: const InputDecoration(labelText: 'Top:'),
+              onEditingComplete: () => controller.setMargin(
+                  PrintMargins.top, double.parse(topController.text)),
+            ),
             Row(
-              children: const [
-                //TODO: add margin and page size adjustment options
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: leftController,
+                    decoration: const InputDecoration(labelText: 'Left:'),
+                    onEditingComplete: () => controller.setMargin(
+                        PrintMargins.left, double.parse(leftController.text)),
+                  ),
+                ),
+                Expanded(
+                  child: TextField(
+                      controller: rightController,
+                      decoration: const InputDecoration(labelText: 'Right:'),
+                      onEditingComplete: () => controller.setMargin(
+                          PrintMargins.right,
+                          double.parse(rightController.text))),
+                ),
               ],
-            )
+            ),
+            TextField(
+                controller: bottomController,
+                decoration: const InputDecoration(labelText: 'Bottom:'),
+                onEditingComplete: () => controller.setMargin(
+                    PrintMargins.bottom, double.parse(bottomController.text))),
           ],
         ),
       ),

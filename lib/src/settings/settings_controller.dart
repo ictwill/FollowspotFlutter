@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:followspot_application_1/src/screens/pdf_preview_screen.dart';
+import 'package:pdf/pdf.dart';
 
 import 'settings_service.dart';
 
@@ -12,6 +14,12 @@ class SettingsController with ChangeNotifier {
 
   // Make SettingsService a private variable so it is not used directly.
   final SettingsService _settingsService;
+  PdfPageFormat pageFormat = PdfPageFormat.letter;
+
+  changePageFormat(PdfPageFormat format) {
+    pageFormat = format;
+    notifyListeners();
+  }
 
   // Make ThemeMode a private variable so it is not updated directly without
   // also persisting the changes with the SettingsService.
@@ -46,5 +54,24 @@ class SettingsController with ChangeNotifier {
     // Persist the changes to a local database or the internet using the
     // SettingService.
     await _settingsService.updateThemeMode(newThemeMode);
+  }
+
+  setMargin(PrintMargins printMargins, double size) {
+    double value = size * PdfPageFormat.inch;
+
+    switch (printMargins) {
+      case PrintMargins.top:
+        pageFormat = pageFormat.copyWith(marginTop: value);
+        break;
+      case PrintMargins.left:
+        pageFormat = pageFormat.copyWith(marginLeft: value);
+        break;
+      case PrintMargins.right:
+        pageFormat = pageFormat.copyWith(marginRight: value);
+        break;
+      default:
+        pageFormat = pageFormat.copyWith(marginBottom: value);
+    }
+    notifyListeners();
   }
 }

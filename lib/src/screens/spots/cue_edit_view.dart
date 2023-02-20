@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:followspot_application_1/src/models/cue.dart';
+import 'package:followspot_application_1/src/models/maneuver.dart';
 import 'package:followspot_application_1/src/models/show_model.dart';
-import 'package:followspot_application_1/src/spots/cue_card.dart';
+import 'package:followspot_application_1/src/screens/spots/cue_card.dart';
 import 'package:provider/provider.dart';
 
 /// Displays detailed information about a SampleItem.
@@ -28,7 +29,7 @@ class _CueEditViewState extends State<CueEditView> {
   @override
   void initState() {
     numberControl.text = deleteTrailing(widget.cue.number);
-    actionControl.text = widget.cue.action;
+    actionControl.text = widget.cue.maneuver?.name ?? '';
     targetControl.text = widget.cue.target;
     timeControl.text = validateTime(time: widget.cue.time);
     sizeControl.text = widget.cue.size;
@@ -91,7 +92,8 @@ class _CueEditViewState extends State<CueEditView> {
             actions: [
               ElevatedButton(
                 onPressed: () {
-                  show.updateCue(widget.spot, widget.cue, _createCue());
+                  show.updateCue(widget.spot, widget.cue,
+                      _createCue(show.getManeuver(actionControl.text)));
                   Navigator.pop(context);
                 },
                 child: const Text('Save'),
@@ -183,15 +185,16 @@ class _CueEditViewState extends State<CueEditView> {
     );
   }
 
-  Cue _createCue() {
+  Cue _createCue(Maneuver maneuver) {
     final Cue newCue = Cue(
       id: widget.cue.id,
       number: double.parse(numberControl.text),
-      action: actionControl.text,
+      maneuver: maneuver,
       target: targetControl.text,
-      time: int.parse(timeControl.text),
+      time: int.parse(timeControl.text.isNotEmpty ? timeControl.text : '-1'),
       size: sizeControl.text,
-      intensity: int.parse(intensityControl.text),
+      intensity: int.parse(
+          intensityControl.text.isNotEmpty ? intensityControl.text : '-1'),
       frames: frames,
       notes: notesControl.text,
       spot: widget.spot,

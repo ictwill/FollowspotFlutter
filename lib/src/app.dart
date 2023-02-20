@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:followspot_application_1/src/models/show_model.dart';
+import 'package:followspot_application_1/src/screens/maneuver_edit_view.dart';
 import 'package:followspot_application_1/src/screens/pdf_preview_screen.dart';
 import 'package:provider/provider.dart';
 
-import 'spots/spot_view.dart';
+import 'screens/spots/spot_view.dart';
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
 
@@ -54,7 +55,10 @@ class MyApp extends StatelessWidget {
                     return SettingsView(controller: settingsController);
                   case PdfPreviewScreen.routeName:
                     return PdfPreviewScreen(
-                        show: Provider.of<ShowModel>(context).show);
+                        show: Provider.of<ShowModel>(context).show,
+                        controller: settingsController);
+                  case ManeuverEditView.routeName:
+                    return const ManeuverEditView();
                   case SpotView.routeName:
                   default:
                     return SpotView(

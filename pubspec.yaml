@@ -26,6 +26,7 @@ dependencies:
       path: plugins/window_size
   window_manager: ^0.3.0
   file_picker: ^5.2.5
+  flutter_colorpicker: ^1.0.3
 
 dev_dependencies:
   flutter_test:
@@ -45,5 +46,5 @@ flutter:
   generate: true
 
   assets:
-    # Add assets from the images directory to the application.
     - assets/images/
+    - assets/fonts/

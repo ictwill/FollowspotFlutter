@@ -1,6 +1,6 @@
-import 'package:followspot_application_1/src/data/dummy_show.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import 'maneuver.dart';
 import 'spot.dart';
 
 part 'show.g.dart';
@@ -11,13 +11,14 @@ class Show {
   final int id;
   final ShowInfo info;
   List<Spot> spotList;
+  final List<Maneuver> maneuverList;
 
-  Show({
-    this.filename = '',
-    this.id = -1,
-    required this.info,
-    this.spotList = const [],
-  });
+  Show(
+      {this.filename = '',
+      this.id = -1,
+      required this.info,
+      this.spotList = const <Spot>[],
+      this.maneuverList = const []});
 
   factory Show.fromJson(Map<String, dynamic> json) => _$ShowFromJson(json);
 
@@ -36,6 +37,12 @@ class Show {
 
     return sorted;
   }
+
+  Maneuver addManeuver(Maneuver maneuver) {
+    maneuverList.add(maneuver);
+    return maneuverList.firstWhere(
+        (element) => element.name.toLowerCase() == maneuver.name.toLowerCase());
+  }
 }
 
 @JsonSerializable()
@@ -49,10 +56,10 @@ class ShowInfo {
 
   ShowInfo(
       {this.id = -1,
-      this.title = '',
-      this.location = '',
-      this.ld = '',
-      this.ald = '',
+      this.title = '-',
+      this.location = '-',
+      this.ld = '-',
+      this.ald = '-',
       required this.date});
 
   factory ShowInfo.fromJson(Map<String, dynamic> json) =>

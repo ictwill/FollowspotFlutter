@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:followspot_application_1/src/data/dummy_show.dart';
 import 'package:followspot_application_1/src/models/show.dart';
 import 'package:followspot_application_1/src/models/show_model.dart';
+import 'package:followspot_application_1/src/screens/maneuver_edit_view.dart';
 import 'package:followspot_application_1/src/screens/pdf_preview_screen.dart';
 import 'package:followspot_application_1/src/settings/settings_controller.dart';
 import 'package:followspot_application_1/src/settings/settings_view.dart';
@@ -14,7 +15,7 @@ import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 import 'models/cue.dart';
-import 'spots/cue_edit_view.dart';
+import 'screens/spots/cue_edit_view.dart';
 
 /// A class for consolidating the definition of menu entries.
 ///
@@ -249,6 +250,19 @@ class _MyMenuBarState extends State<MyMenuBar> {
                 onPressed: () => navigateNewCue(context, 4),
               ),
           ]),
+          MenuEntry(
+            label: 'Maneuvers',
+            onPressed: () {
+              Navigator.restorablePushNamed(
+                  context, ManeuverEditView.routeName);
+
+              setState(() {
+                _lastSelection = 'Maneuvers';
+              });
+            },
+            shortcut: const SingleActivator(LogicalKeyboardKey.keyM,
+                control: true, shift: true),
+          ),
           MenuEntry(
             label: 'Settings',
             onPressed: () {

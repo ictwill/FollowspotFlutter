@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/cue.dart';
+import '../../models/cue.dart';
 import 'cue_edit_view.dart';
 
 class CueCard extends StatelessWidget {
@@ -37,7 +37,7 @@ class CueCard extends StatelessWidget {
                   width: 96.0,
                   height: 80.0,
                   alignment: Alignment.center,
-                  color: item.getColor(),
+                  color: item.maneuver?.getColor(),
                   child: Text(deleteTrailing(item.number),
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.titleMedium!.copyWith(
@@ -51,13 +51,23 @@ class CueCard extends StatelessWidget {
                     child: Column(
                       children: [
                         Table(
-                          columnWidths: const <int, TableColumnWidth>{
-                            1: FlexColumnWidth(2.0)
-                          },
+                          columnWidths: const <int, TableColumnWidth>{},
                           children: [
                             TableRow(
                               children: [
-                                Text(item.action),
+                                TableCell(
+                                    child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      item.maneuver?.icon,
+                                      color: Color(
+                                          item.maneuver?.color ?? 0xFF77777),
+                                    ),
+                                    const SizedBox(width: 8.0),
+                                    Text(item.maneuver?.name ?? '-'),
+                                  ],
+                                )),
                                 Text(
                                   item.target,
                                   textAlign: TextAlign.center,
@@ -116,6 +126,6 @@ class CueCard extends StatelessWidget {
 }
 
 String validateIntensity({int? intensity}) =>
-    intensity != null && intensity >= 0 ? '$intensity' : '0';
+    intensity != null && intensity >= 0 ? '$intensity' : '';
 
-String validateTime({int? time}) => time != null && time >= 0 ? '$time' : '0';
+String validateTime({int? time}) => time != null && time >= 0 ? '$time' : '';

@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:followspot_application_1/src/models/show.dart';
 import 'package:followspot_application_1/src/screens/printing.dart';
-import 'package:pdf/pdf.dart';
+import 'package:followspot_application_1/src/settings/settings_controller.dart';
 import 'package:printing/printing.dart';
 
 import '../settings/settings_view.dart';
 
+enum PrintMargins { top, left, right, bottom }
+
 class PdfPreviewScreen extends StatefulWidget {
-  const PdfPreviewScreen({super.key, required this.show});
+  const PdfPreviewScreen(
+      {super.key, required this.show, required this.controller});
 
   static const routeName = '/print_preview';
+  final SettingsController controller;
 
   final Show show;
 
@@ -18,8 +22,8 @@ class PdfPreviewScreen extends StatefulWidget {
 }
 
 class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
-  PdfPageFormat pageFormat = PdfPageFormat.letter;
   int selectedSpotindex = -1;
+  bool shouldRedraw = false;
 
   @override
   Widget build(BuildContext context) {
@@ -64,23 +68,26 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
       ),
       body: PdfPreview(
         pdfFileName: '${widget.show.filename}.pdf',
-        initialPageFormat: pageFormat,
-        onPageFormatChanged: (value) {
+        initialPageFormat: widget.controller.pageFormat,
+        onPageFormatChanged: (format) {
+          widget.controller.changePageFormat(format);
           setState(() {
-            pageFormat = value;
+            shouldRedraw = true;
           });
         },
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              // Navigate to the settings page. If the user leaves and returns
-              // to the app after it has been killed while running in the
-              // background, the navigation stack is restored.
-              Navigator.restorablePushNamed(context, SettingsView.routeName);
-            },
-          ),
-        ],
+        shouldRepaint: shouldRedraw,
+        useActions: false,
+        //actions: [
+        // IconButton(
+        //   icon: const Icon(Icons.settings),
+        //   onPressed: () {
+        //     // Navigate to the settings page. If the user leaves and returns
+        //     // to the app after it has been killed while running in the
+        //     // background, the navigation stack is restored.
+        //     Navigator.restorablePushNamed(context, SettingsView.routeName);
+        //   },
+        // ),
+        //],
         build: (format) => makePdf(format, widget.show, selectedSpotindex),
       ),
     );
