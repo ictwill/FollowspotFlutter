@@ -25,6 +25,10 @@ class _CueEditViewState extends State<CueEditView> {
   final intensityControl = TextEditingController();
   final notesControl = TextEditingController();
   List<String> frames = [];
+  Color? color;
+  Icon icon = const Icon(
+    Icons.square,
+  );
 
   @override
   void initState() {
@@ -38,7 +42,15 @@ class _CueEditViewState extends State<CueEditView> {
 
     frames.addAll(widget.cue.frames);
 
+    if (widget.cue.maneuver != null) {
+      color = widget.cue.maneuver!.getColor();
+      icon = Icon(
+        widget.cue.maneuver!.icon,
+        color: widget.cue.maneuver!.getColor(),
+      );
+    }
     debugPrint(widget.cue.toString());
+
     super.initState();
   }
 
@@ -65,11 +77,14 @@ class _CueEditViewState extends State<CueEditView> {
               autofocus: true,
               controller: numberControl,
               decoration: const InputDecoration(labelText: 'Cue')),
+          Icon(
+            widget.cue.maneuver?.icon,
+            color: Color(widget.cue.maneuver?.color ?? 0xFF77777),
+          ),
           TextField(
               controller: actionControl,
               decoration: const InputDecoration(
-                labelText: 'Action',
-                prefixIcon: Icon(Icons.square),
+                labelText: 'Maneuver',
               )),
           TextField(
               controller: targetControl,

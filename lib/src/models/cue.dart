@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:followspot_application_1/src/models/maneuver.dart';
 import 'package:json_annotation/json_annotation.dart';
 

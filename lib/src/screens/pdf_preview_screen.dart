@@ -4,8 +4,6 @@ import 'package:followspot_application_1/src/screens/printing.dart';
 import 'package:followspot_application_1/src/settings/settings_controller.dart';
 import 'package:printing/printing.dart';
 
-import '../settings/settings_view.dart';
-
 enum PrintMargins { top, left, right, bottom }
 
 class PdfPreviewScreen extends StatefulWidget {
@@ -76,18 +74,18 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
           });
         },
         shouldRepaint: shouldRedraw,
-        useActions: false,
-        //actions: [
-        // IconButton(
-        //   icon: const Icon(Icons.settings),
-        //   onPressed: () {
-        //     // Navigate to the settings page. If the user leaves and returns
-        //     // to the app after it has been killed while running in the
-        //     // background, the navigation stack is restored.
-        //     Navigator.restorablePushNamed(context, SettingsView.routeName);
-        //   },
-        // ),
-        //],
+        useActions: true,
+        actions: const [
+          // IconButton(
+          //   icon: const Icon(Icons.settings),
+          //   onPressed: () {
+          //     // Navigate to the settings page. If the user leaves and returns
+          //     // to the app after it has been killed while running in the
+          //     // background, the navigation stack is restored.
+          //     Navigator.restorablePushNamed(context, SettingsView.routeName);
+          //   },
+          // ),
+        ],
         build: (format) => makePdf(format, widget.show, selectedSpotindex),
       ),
     );

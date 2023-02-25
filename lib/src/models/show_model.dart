@@ -15,14 +15,17 @@ class ShowModel extends ChangeNotifier {
 
   final uuid = const Uuid();
 
-  static final Cue blank = Cue(id: 'blank', spot: -1);
-  Cue currentCue = blank;
+  Cue currentCue = Cue(id: 'blank', spot: -1);
 
   Cue findCue(int spot, double number) {
-    return show.spotList[spot].cues.firstWhere(
-      (element) => element.number == number,
-      orElse: () => blank,
-    );
+    if (show.spotList[spot].cues.isNotEmpty) {
+      return show.spotList[spot].cues.singleWhere(
+        (element) => element.number == number,
+        orElse: () => Cue(id: 'blank', spot: spot),
+      );
+    } else {
+      return Cue(id: 'blank', spot: spot);
+    }
   }
 
   void selectCue(Cue cue) {

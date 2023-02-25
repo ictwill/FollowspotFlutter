@@ -69,24 +69,52 @@ class SettingsView extends StatelessWidget {
               ],
             ),
             const Divider(),
-            TextField(
-              controller: topController,
-              decoration: const InputDecoration(labelText: 'Top:'),
-              onEditingComplete: () => controller.setMargin(
-                  PrintMargins.top, double.parse(topController.text)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 100.0,
+                  child: TextField(
+                    textAlign: TextAlign.center,
+                    controller: topController,
+                    decoration: const InputDecoration(labelText: 'Top:'),
+                    onEditingComplete: () => controller.setMargin(
+                        PrintMargins.top, double.parse(topController.text)),
+                  ),
+                ),
+              ],
             ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(
+                SizedBox(
+                  width: 100,
                   child: TextField(
+                    textAlign: TextAlign.center,
                     controller: leftController,
                     decoration: const InputDecoration(labelText: 'Left:'),
                     onEditingComplete: () => controller.setMargin(
                         PrintMargins.left, double.parse(leftController.text)),
                   ),
                 ),
-                Expanded(
+                Container(
+                    margin: const EdgeInsets.all(16.0),
+                    color: Colors.white,
+                    width: controller.pageFormat.width / 3,
+                    height: controller.pageFormat.height / 3,
+                    child: Container(
+                      color: Colors.grey.shade400,
+                      margin: EdgeInsets.fromLTRB(
+                        controller.pageFormat.marginLeft / 3,
+                        controller.pageFormat.marginTop / 3,
+                        controller.pageFormat.marginRight / 3,
+                        controller.pageFormat.marginBottom / 3,
+                      ),
+                    )),
+                SizedBox(
+                  width: 100,
                   child: TextField(
+                      textAlign: TextAlign.center,
                       controller: rightController,
                       decoration: const InputDecoration(labelText: 'Right:'),
                       onEditingComplete: () => controller.setMargin(
@@ -95,11 +123,21 @@ class SettingsView extends StatelessWidget {
                 ),
               ],
             ),
-            TextField(
-                controller: bottomController,
-                decoration: const InputDecoration(labelText: 'Bottom:'),
-                onEditingComplete: () => controller.setMargin(
-                    PrintMargins.bottom, double.parse(bottomController.text))),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 100,
+                  child: TextField(
+                      textAlign: TextAlign.center,
+                      controller: bottomController,
+                      decoration: const InputDecoration(labelText: 'Bottom:'),
+                      onEditingComplete: () => controller.setMargin(
+                          PrintMargins.bottom,
+                          double.parse(bottomController.text))),
+                ),
+              ],
+            ),
           ],
         ),
       ),
