@@ -49,7 +49,7 @@ Show dummyShow() {
       50,
       (index) => Cue(
         id: uuid.v4(),
-        number: (index + 1 + Random().nextInt(4)).toDouble(),
+        number: (index * spot.number).toDouble(),
         spot: spot.number,
         target: 'Cinderella',
       ),
