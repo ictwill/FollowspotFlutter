@@ -4,18 +4,13 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:followspot_application_1/src/data/dummy_show.dart';
-import 'package:followspot_application_1/src/models/show.dart';
 import 'package:followspot_application_1/src/models/show_model.dart';
 import 'package:followspot_application_1/src/screens/maneuver_edit_view.dart';
 import 'package:followspot_application_1/src/screens/pdf_preview_screen.dart';
+import 'package:followspot_application_1/src/screens/spots/spot_view.dart';
 import 'package:followspot_application_1/src/settings/settings_controller.dart';
 import 'package:followspot_application_1/src/settings/settings_view.dart';
 import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
-
-import 'models/cue.dart';
-import 'screens/spots/cue_edit_view.dart';
 
 /// A class for consolidating the definition of menu entries.
 ///
@@ -323,13 +318,4 @@ class _MyMenuBarState extends State<MyMenuBar> {
         ShortcutRegistry.of(context).addAll(MenuEntry.shortcuts(result));
     return result;
   }
-
-  Future<dynamic> navigateNewCue(BuildContext context, int spot) =>
-      showModalBottomSheet<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return CueEditView(
-              spot: spot, cue: Cue(id: const Uuid().v4(), spot: spot));
-        },
-      );
 }
