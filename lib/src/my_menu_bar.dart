@@ -12,6 +12,20 @@ import 'package:followspot_application_1/src/settings/settings_controller.dart';
 import 'package:followspot_application_1/src/settings/settings_view.dart';
 import 'package:provider/provider.dart';
 
+import 'models/cue.dart';
+
+final _digitKeys = {
+  1: LogicalKeyboardKey.digit1,
+  2: LogicalKeyboardKey.digit2,
+  3: LogicalKeyboardKey.digit3,
+  4: LogicalKeyboardKey.digit4,
+  5: LogicalKeyboardKey.digit5,
+  6: LogicalKeyboardKey.digit6,
+  7: LogicalKeyboardKey.digit7,
+  8: LogicalKeyboardKey.digit8,
+  9: LogicalKeyboardKey.digit9,
+};
+
 /// A class for consolidating the definition of menu entries.
 ///
 /// This sort of class is not required, but illustrates one way that defining
@@ -216,34 +230,24 @@ class _MyMenuBarState extends State<MyMenuBar> {
         label: 'Edit',
         menuChildren: <MenuEntry>[
           MenuEntry(label: 'New Cue', menuChildren: [
-            if (showModel.show.spotList.isNotEmpty)
-              MenuEntry(
-                label: 'Spot 1',
-                shortcut: const SingleActivator(LogicalKeyboardKey.digit1,
-                    control: true),
-                onPressed: () => navigateNewCue(context, 1),
-              ),
-            if (showModel.show.spotList.length > 1)
-              MenuEntry(
-                label: 'Spot 2',
-                shortcut: const SingleActivator(LogicalKeyboardKey.digit2,
-                    control: true),
-                onPressed: () => navigateNewCue(context, 2),
-              ),
-            if (showModel.show.spotList.length > 2)
-              MenuEntry(
-                label: 'Spot 3',
-                shortcut: const SingleActivator(LogicalKeyboardKey.digit3,
-                    control: true),
-                onPressed: () => navigateNewCue(context, 3),
-              ),
-            if (showModel.show.spotList.length > 3)
-              MenuEntry(
-                label: 'Spot 4',
-                shortcut: const SingleActivator(LogicalKeyboardKey.digit4,
-                    control: true),
-                onPressed: () => navigateNewCue(context, 4),
-              ),
+            for (var i = 1; i <= showModel.show.spotList.length; i++)
+              if (i <= 9)
+                MenuEntry(
+                  label: 'Spot $i',
+                  shortcut: SingleActivator(_digitKeys[i]!, control: true),
+                  onPressed: () {
+                    showModel.currentCue = Cue(id: 'blank', spot: i);
+                    navigateNewCue(context, i);
+                  },
+                )
+              else
+                MenuEntry(
+                  label: 'Spot $i',
+                  onPressed: () {
+                    showModel.currentCue = Cue(id: 'blank', spot: i);
+                    navigateNewCue(context, i);
+                  },
+                )
           ]),
           MenuEntry(
             label: 'Maneuvers',
