@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:followspot_application_1/src/screens/spots/cue_edit_form.dart';
 
 import '../../models/cue.dart';
-import 'cue_edit_view.dart';
+import '../../models/maneuver.dart';
 
 class CueCard extends StatelessWidget {
   const CueCard({
     Key? key,
     required this.item,
+    required this.maneuver,
   }) : super(key: key);
 
   final Cue item;
+  final Maneuver? maneuver;
 
   @override
   Widget build(BuildContext context) {
@@ -38,14 +40,15 @@ class CueCard extends StatelessWidget {
                   Container(
                     width: 96.0,
                     alignment: Alignment.center,
-                    color: item.maneuver?.getColor(),
+                    color: maneuver?.getColor(),
                     child: Text(deleteTrailing(item.number),
                         textAlign: TextAlign.center,
                         style: Theme.of(context)
                             .textTheme
                             .titleMedium!
                             .copyWith(
-                                color: Theme.of(context).colorScheme.onPrimary,
+                                color: maneuver?.getContrastingTextColor() ??
+                                    Theme.of(context).colorScheme.onPrimary,
                                 fontWeight: FontWeight.bold)),
                   ),
                   Expanded(
@@ -64,12 +67,16 @@ class CueCard extends StatelessWidget {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Icon(
-                                        item.maneuver?.icon,
-                                        color: Color(
-                                            item.maneuver?.color ?? 0xFF77777),
+                                        IconData(
+                                            maneuver?.iconCodePoint ??
+                                                Icons.check_box_outline_blank
+                                                    .codePoint,
+                                            fontFamily: maneuver?.fontFamily),
+                                        color:
+                                            Color(maneuver?.color ?? 0xFF77777),
                                       ),
                                       const SizedBox(width: 8.0),
-                                      Text(item.maneuver?.name ?? '-'),
+                                      Text(maneuver?.name ?? '-'),
                                     ],
                                   )),
                                   Text(
@@ -87,8 +94,8 @@ class CueCard extends StatelessWidget {
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 8.0),
-                                    child: Text(
-                                        '${validateIntensity(intensity: item.intensity)} %'),
+                                    child: Text(validateIntensity(
+                                        intensity: item.intensity)),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
@@ -102,7 +109,7 @@ class CueCard extends StatelessWidget {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 8.0),
                                     child: Text(
-                                      '${validateTime(time: item.time)} ct',
+                                      validateTime(time: item.time),
                                       textAlign: TextAlign.end,
                                     ),
                                   ),
@@ -131,9 +138,9 @@ class CueCard extends StatelessWidget {
 }
 
 String validateIntensity({int? intensity}) =>
-    intensity != null && intensity >= 0 ? '$intensity' : '';
+    intensity != null && intensity >= 0 ? '$intensity %' : '';
 
-String validateTime({int? time}) => time != null && time >= 0 ? '$time' : '';
+String validateTime({int? time}) => time != null && time >= 0 ? '$time ct' : '';
 String deleteTrailing(double number) {
   var string = number.toString();
   while (string.endsWith('0') && string.contains('.0')) {

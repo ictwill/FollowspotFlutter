@@ -29,17 +29,18 @@ Show dummyShow() {
       ),
       maneuverList: [
         Maneuver(
-            name: 'Fade Up',
-            color: Colors.green.value,
-            icon: Icons.arrow_upward_rounded),
+          name: 'Fade Up',
+          color: Colors.green.value,
+          iconCodePoint: Icons.arrow_upward_rounded.codePoint,
+        ),
         Maneuver(
             name: 'Fade Down',
             color: Colors.orange.value,
-            icon: Icons.arrow_downward_rounded),
+            iconCodePoint: Icons.arrow_downward_rounded.codePoint),
         Maneuver(
             name: 'Fade Out',
             color: Colors.red.value,
-            icon: Icons.arrow_circle_down),
+            iconCodePoint: Icons.arrow_circle_down.codePoint),
       ]);
 
   var uuid = const Uuid();

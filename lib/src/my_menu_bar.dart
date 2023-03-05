@@ -13,6 +13,7 @@ import 'package:followspot_application_1/src/settings/settings_view.dart';
 import 'package:provider/provider.dart';
 
 import 'models/cue.dart';
+import 'models/show.dart';
 
 final _digitKeys = {
   1: LogicalKeyboardKey.digit1,
@@ -136,13 +137,15 @@ class _MyMenuBarState extends State<MyMenuBar> {
             label: 'Open',
             onPressed: () async {
               FilePickerResult? result = await FilePicker.platform.pickFiles(
-                  allowMultiple: false, dialogTitle: 'Open a Show File');
+                  allowMultiple: false,
+                  dialogTitle: 'Open a Show File',
+                  allowedExtensions: ['spot', 'fws']);
               if (result != null) {
                 // User
                 File file = File(result.files.single.path!);
                 String data = await file.readAsString();
 
-                showModel.openShow(data);
+                showModel.openShow(data, file);
               }
               debugPrint('Open File selected');
             },
@@ -153,11 +156,10 @@ class _MyMenuBarState extends State<MyMenuBar> {
           MenuEntry(
             label: 'Save',
             onPressed: () async {
-              if (showModel.show.filename.isNotEmpty) {
-                File file = File(showModel.show.filename);
-                file.writeAsString(jsonEncode(showModel.show.toJson()));
-
-                await file.create();
+              if (showModel.show.filename != null) {
+                showModel.save(showModel.show.filename!);
+              } else {
+                showModel.saveAs();
               }
             },
             shortcut:
@@ -167,22 +169,7 @@ class _MyMenuBarState extends State<MyMenuBar> {
           MenuEntry(
             label: 'Save As..',
             onPressed: () async {
-              String? outputFile = await FilePicker.platform.saveFile(
-                dialogTitle: 'Please select an output file:',
-                fileName: '${showModel.show.info.title}.fws',
-              );
-
-              if (outputFile == null) {
-                // User canceled the picker
-              } else {
-                File file = File(outputFile);
-                file.writeAsString(jsonEncode(showModel.show.toJson()));
-
-                file.create(recursive: true);
-                showModel.show.filename = outputFile;
-              }
-
-              debugPrint('Save as selected');
+              showModel.saveAs();
             },
             shortcut: const SingleActivator(LogicalKeyboardKey.keyS,
                 control: true, shift: true),
@@ -206,7 +193,7 @@ class _MyMenuBarState extends State<MyMenuBar> {
             onPressed: () {
               showAboutDialog(
                 context: context,
-                applicationName: 'MenuBar Sample',
+                applicationName: 'Followspot',
                 applicationVersion: '1.0.0',
               );
               setState(() {

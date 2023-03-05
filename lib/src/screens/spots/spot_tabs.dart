@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:followspot_application_1/src/models/cue.dart';
 import 'package:followspot_application_1/src/screens/spots/spot_view.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +21,10 @@ class SpotTabs extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
                 child: ElevatedButton(
                   autofocus: true,
-                  onPressed: () => navigateNewCue(context, i + 1),
+                  onPressed: () {
+                    showModel.currentCue = Cue(id: 'blank', spot: i + 1);
+                    navigateNewCue(context, i + 1);
+                  },
                   child: Padding(
                     padding: const EdgeInsets.all(4.0),
                     child: Column(

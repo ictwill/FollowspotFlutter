@@ -9,7 +9,7 @@ part of 'cue.dart';
 Cue _$CueFromJson(Map<String, dynamic> json) => Cue(
       id: json['id'] as String,
       number: (json['number'] as num?)?.toDouble() ?? 0.0,
-      maneuver: json['maneuver'],
+      maneuver: json['maneuver'] as String?,
       target: json['target'] as String? ?? '',
       size: json['size'] as String? ?? '',
       intensity: json['intensity'] as int?,

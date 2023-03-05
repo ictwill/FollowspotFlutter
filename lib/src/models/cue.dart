@@ -3,11 +3,11 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'cue.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class Cue {
   String id;
   double number;
-  Maneuver? maneuver;
+  String? maneuver;
   String target;
   String size;
   int? intensity;

@@ -6,13 +6,13 @@ import 'package:followspot_application_1/src/screens/pdf_preview_screen.dart';
 import 'package:followspot_application_1/src/screens/spots/spot_cues.dart';
 import 'package:followspot_application_1/src/screens/spots/spot_tabs.dart';
 import 'package:followspot_application_1/src/settings/settings_controller.dart';
-import 'package:followspot_application_1/src/screens/spots/cue_edit_view.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../models/cue.dart';
 import '../../my_menu_bar.dart';
 import '../../settings/settings_view.dart';
+import 'cue_edit_form.dart';
 import 'status_bar.dart';
 
 /// Displays a list of Cues.
@@ -86,8 +86,7 @@ Future<dynamic> navigateNewCue(BuildContext context, int spot) =>
     showModalBottomSheet<void>(
       context: context,
       builder: (BuildContext context) {
-        return CueEditView(
-            spot: spot, cue: Cue(id: const Uuid().v4(), spot: spot));
+        return CueEditForm(cue: Cue(id: const Uuid().v4(), spot: spot));
       },
     );
 
@@ -98,6 +97,7 @@ class BlankScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Expanded(child: Text('Open a Show or Start a New Show'));
+    return const Expanded(
+        child: Center(child: Text('Open a Show or Start a New Show')));
   }
 }

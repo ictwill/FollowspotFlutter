@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import 'package:followspot_application_1/src/models/show_model.dart';
+import 'package:followspot_application_1/src/screens/icon_picker.dart';
 import 'package:provider/provider.dart';
 
 class ManeuverEditView extends StatefulWidget {
@@ -37,6 +39,9 @@ class _ManeuverEditViewState extends State<ManeuverEditView> {
               DataColumn(
                 label: Text('Color'),
               ),
+              DataColumn(
+                label: Text('Delete'),
+              ),
             ],
                 rows: showModel.show.maneuverList
                     .map(
@@ -50,11 +55,18 @@ class _ManeuverEditViewState extends State<ManeuverEditView> {
                           ),
                           DataCell(
                             Icon(
-                              e.icon,
+                              IconData(
+                                  e.iconCodePoint ?? Icons.square.codePoint,
+                                  fontFamily: e.fontFamily),
                               color: Color(e.color),
                             ),
-                            onTap: () {
-                              //TODO: Implement Icon Picker
+                            onTap: () async {
+                              IconData? iconData =
+                                  await FlutterIconPicker.showIconPicker(
+                                      context);
+                              if (iconData != null) {
+                                showModel.updateManeuverIcon(e, iconData);
+                              }
                             },
                           ),
                           DataCell(
@@ -75,8 +87,8 @@ class _ManeuverEditViewState extends State<ManeuverEditView> {
                                         actions: [
                                           ElevatedButton(
                                             onPressed: () {
-                                              showModel.updateManeuver(
-                                                  pickerColor, e);
+                                              showModel.updateManeuverColor(
+                                                  e, pickerColor);
                                               Navigator.pop(context);
                                             },
                                             child: const Padding(
@@ -88,6 +100,12 @@ class _ManeuverEditViewState extends State<ManeuverEditView> {
                                       ));
                             },
                           ),
+                          DataCell(IconButton(
+                            icon: const Icon(Icons.delete),
+                            onPressed: () {
+                              showModel.deleteManeuver(e);
+                            },
+                          ))
                         ],
                       ),
                     )

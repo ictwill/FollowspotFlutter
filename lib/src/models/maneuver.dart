@@ -7,16 +7,31 @@ part 'maneuver.g.dart';
 class Maneuver {
   String name;
   int color;
-  String iconPath;
+  String? iconName;
+  int? iconCodePoint;
   bool header;
-  IconData? icon;
+  String? fontFamily;
 
-  Maneuver(
-      {required this.name,
-      this.color = 0xFF777777,
-      this.iconPath = '',
-      this.header = false,
-      this.icon});
+  Maneuver({
+    required this.name,
+    this.color = 0xFF777777,
+    this.iconName = '',
+    this.iconCodePoint,
+    this.header = false,
+    this.fontFamily = 'material',
+  });
+
+  @override
+  bool operator ==(Object other) {
+    if (other is Maneuver) {
+      return name.toLowerCase() == other.name.toLowerCase();
+    } else {
+      return false;
+    }
+  }
+
+  @override
+  int get hashCode => name.hashCode;
 
   factory Maneuver.fromJson(Map<String, dynamic> json) =>
       _$ManeuverFromJson(json);
@@ -26,4 +41,16 @@ class Maneuver {
   Color getColor() => Color(color);
 
   void updateColor(Color value) => color = value.value;
+
+  Color getContrastingTextColor() {
+    Color background = Color(color);
+    // Calculate the luminance of the background color
+    final double backgroundLuminance = (0.2126 * background.red +
+            0.7152 * background.green +
+            0.0722 * background.blue) /
+        255;
+
+    // Choose either black or white as the contrasting color
+    return backgroundLuminance > 0.5 ? Colors.black : Colors.white;
+  }
 }

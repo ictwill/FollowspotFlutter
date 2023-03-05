@@ -1,3 +1,4 @@
+import 'package:basic_utils/basic_utils.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'maneuver.dart';
@@ -7,18 +8,18 @@ part 'show.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class Show {
-  String filename;
+  String? filename;
   final int id;
   final ShowInfo info;
   List<Spot> spotList;
-  final List<Maneuver> maneuverList;
+  List<Maneuver> maneuverList;
 
   Show(
-      {this.filename = '',
+      {this.filename,
       this.id = -1,
       required this.info,
       this.spotList = const <Spot>[],
-      this.maneuverList = const []});
+      this.maneuverList = const <Maneuver>[]});
 
   factory Show.fromJson(Map<String, dynamic> json) => _$ShowFromJson(json);
 
@@ -38,10 +39,31 @@ class Show {
     return sorted;
   }
 
+  Maneuver? getManeuver(String? text) {
+    if (text != null && text.isNotEmpty) {
+      return maneuverList.firstWhere(
+        (element) => element.name.toLowerCase() == text.toLowerCase(),
+        orElse: () {
+          Maneuver newManeuver =
+              Maneuver(name: StringUtils.capitalize(text, allWords: true));
+          return addManeuver(newManeuver);
+        },
+      );
+    } else {
+      return null;
+    }
+  }
+
   Maneuver addManeuver(Maneuver maneuver) {
-    maneuverList.add(maneuver);
+    maneuverList.toList(growable: true);
+    if (!maneuverList.contains(maneuver)) maneuverList.add(maneuver);
+
     return maneuverList.firstWhere(
         (element) => element.name.toLowerCase() == maneuver.name.toLowerCase());
+  }
+
+  void deleteManeuver(Maneuver maneuver) {
+    maneuverList.remove(maneuver);
   }
 }
 
