@@ -15,10 +15,20 @@ class StatusBar extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Consumer<ShowModel>(
         builder: (context, showModel, child) => Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: showModel.show.spotList
-                .map((e) => Text('Spot ${e.number} : ${e.cues.length} cues'))
-                .toList()),
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+                mainAxisSize: MainAxisSize.min,
+                children: showModel.show.spotList
+                    .map((e) => Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 64.0),
+                          child:
+                              Text('Spot ${e.number} : ${e.cues.length} cues'),
+                        ))
+                    .toList()),
+            Text(showModel.message),
+          ],
+        ),
       ),
     );
   }

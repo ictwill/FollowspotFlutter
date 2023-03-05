@@ -1,11 +1,11 @@
 import 'package:flutter/services.dart';
 import 'package:followspot_application_1/src/models/cue.dart';
 import 'package:followspot_application_1/src/screens/spots/cue_card.dart';
-import 'package:followspot_application_1/src/screens/spots/cue_edit_view.dart';
-import 'package:flutter/material.dart' as mt;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
+import 'package:printing/printing.dart';
 
+import '../models/maneuver.dart';
 import '../models/show.dart';
 
 Future<Uint8List> makePdf(
@@ -34,11 +34,15 @@ Future<Uint8List> makePdf(
               if (indexSpot == -1)
                 for (int i = 0; i < show.spotList.length; i++)
                   Expanded(
-                    child: PrintCompactCard(show.spotList[i].findCue(e)),
+                    child: PrintCompactCard(show.spotList[i].findCue(e),
+                        show.getManeuver(show.spotList[i].findCue(e).maneuver)),
                   )
               else
                 Expanded(
-                  child: PrintWideCard(show.spotList[indexSpot].findCue(e)),
+                  child: PrintWideCard(
+                      show.spotList[indexSpot].findCue(e),
+                      show.getManeuver(
+                          show.spotList[indexSpot].findCue(e).maneuver)),
                 )
             ],
           );
@@ -75,15 +79,15 @@ Column _showHeader({required Show show, required int indexSpot}) {
     Divider(thickness: .1),
     Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
       if (indexSpot == -1)
-        for (int i = 0; i < show.spotList.length; i++) SpotHeader(show, i)
+        for (int i = 0; i < show.spotList.length; i++) spotHeader(show, i)
       else
-        SpotHeader(show, indexSpot)
+        spotHeader(show, indexSpot)
     ]),
     Divider(thickness: .1),
   ]);
 }
 
-Column SpotHeader(Show show, int i) {
+Column spotHeader(Show show, int i) {
   return Column(children: [
     Text('Spot ${show.spotList[i].number}', textAlign: TextAlign.center),
     Row(
@@ -97,9 +101,9 @@ Column SpotHeader(Show show, int i) {
 ///Card Printable Widget for a cue in a column
 class PrintCompactCard extends StatelessWidget {
   final Cue cue;
+  final Maneuver? maneuver;
 
-  PrintCompactCard(this.cue);
-
+  PrintCompactCard(this.cue, this.maneuver);
   @override
   Widget build(Context context) {
     if (cue.id == 'blank') {
@@ -111,7 +115,7 @@ class PrintCompactCard extends StatelessWidget {
           SizedBox(width: 1.0),
           Container(
             decoration: BoxDecoration(
-              color: PdfColor.fromInt(cue.maneuver?.color ?? 0xFF777777),
+              color: PdfColor.fromInt(maneuver?.color ?? 0xFF777777),
             ),
             height: 34,
             width: 32,
@@ -125,15 +129,11 @@ class PrintCompactCard extends StatelessWidget {
             child: Table(children: [
               TableRow(children: [
                 Row(mainAxisSize: MainAxisSize.min, children: [
-                  if (cue.maneuver?.icon != null)
-                    Icon(
-                      IconData(cue.maneuver?.icon?.codePoint ??
-                          mt.Icons.square.codePoint),
-                      color:
-                          PdfColor.fromInt(cue.maneuver?.color ?? 0x00000000),
-                      size: 18,
-                    ),
-                  Text(cue.maneuver?.name ?? '-'),
+                  if (maneuver?.iconCodePoint != null)
+                    Icon(IconData(maneuver!.iconCodePoint!),
+                        color: PdfColor.fromInt(maneuver?.color ?? 0xFF77777),
+                        size: 12),
+                  Text(maneuver?.name ?? '-'),
                 ]),
                 Text(cue.target, textAlign: TextAlign.center),
                 Text(cue.size, textAlign: TextAlign.right),
@@ -155,8 +155,9 @@ class PrintCompactCard extends StatelessWidget {
 ///Card Printable Widget for a cue in a column
 class PrintWideCard extends StatelessWidget {
   final Cue cue;
+  final Maneuver? maneuver;
 
-  PrintWideCard(this.cue);
+  PrintWideCard(this.cue, this.maneuver);
 
   @override
   Widget build(Context context) {
@@ -169,7 +170,7 @@ class PrintWideCard extends StatelessWidget {
           SizedBox(width: 1.0),
           Container(
             decoration: BoxDecoration(
-              color: PdfColor.fromInt(cue.maneuver?.color ?? 0xFF777777),
+              color: PdfColor.fromInt(maneuver?.color ?? 0xFF777777),
             ),
             height: 24,
             width: 32,
@@ -183,16 +184,10 @@ class PrintWideCard extends StatelessWidget {
             child: Table(children: [
               TableRow(children: [
                 Row(mainAxisSize: MainAxisSize.min, children: [
-                  if (cue.maneuver?.icon != null)
-                    Icon(
-                      //TODO: Fix Material Icon access from inside
-                      IconData(cue.maneuver?.icon?.codePoint ??
-                          mt.Icons.square.codePoint),
-                      color:
-                          PdfColor.fromInt(cue.maneuver?.color ?? 0x00000000),
-                      size: 18,
-                    ),
-                  Text(cue.maneuver?.name ?? '-'),
+                  Icon(const IconData(0xe530),
+                      color: PdfColor.fromInt(maneuver?.color ?? 0xFF77777),
+                      size: 12),
+                  Text(maneuver?.name ?? '-'),
                 ]),
                 Text(cue.target, textAlign: TextAlign.center),
                 Text(cue.size, textAlign: TextAlign.right),
@@ -210,14 +205,23 @@ class PrintWideCard extends StatelessWidget {
 }
 
 Future<PageTheme> myPageTheme(PdfPageFormat format) async {
-  final materialIcons =
-      await rootBundle.load('assets/fonts/MaterialIcons-Regular.ttf');
-
-  final materialIconsTtf = Font.ttf(materialIcons);
   return PageTheme(
     pageFormat: format,
     theme: ThemeData.withFont(
-      icons: materialIconsTtf,
+      base: await PdfGoogleFonts.openSansRegular(),
+      bold: await PdfGoogleFonts.openSansBold(),
+      icons: await PdfGoogleFonts.materialIcons(),
     ),
   );
 }
+
+String deleteTrailing(double number) {
+  var string = number.toString();
+  while (string.endsWith('0') && string.contains('.0')) {
+    string = _dropLast(string);
+    if (string.endsWith('.')) return _dropLast(string);
+  }
+  return string;
+}
+
+String _dropLast(string) => string.substring(0, string.length - 1);

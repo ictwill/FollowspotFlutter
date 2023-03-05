@@ -56,7 +56,7 @@ class SettingsController with ChangeNotifier {
     await _settingsService.updateThemeMode(newThemeMode);
   }
 
-  setMargin(PrintMargins printMargins, double size) {
+  setMargin(PrintMargins printMargins, double size) async {
     double value = size * PdfPageFormat.inch;
 
     switch (printMargins) {
@@ -72,6 +72,8 @@ class SettingsController with ChangeNotifier {
       default:
         pageFormat = pageFormat.copyWith(marginBottom: value);
     }
+
     notifyListeners();
+    await _settingsService.updatePageFormat(pageFormat);
   }
 }
