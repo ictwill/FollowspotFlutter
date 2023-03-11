@@ -17,7 +17,11 @@ class CueCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (item.id == 'blank') {
-      return const Spacer();
+      return const Expanded(
+        child: SizedBox(
+          height: 100,
+        ),
+      );
     } else {
       return Expanded(
         child: Card(
