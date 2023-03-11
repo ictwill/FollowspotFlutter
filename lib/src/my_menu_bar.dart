@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:followspot_application_1/src/models/show_model.dart';
 import 'package:followspot_application_1/src/screens/maneuver_edit_view.dart';
 import 'package:followspot_application_1/src/screens/pdf_preview_screen.dart';
+import 'package:followspot_application_1/src/screens/spots/spot_color_edit_view.dart';
 import 'package:followspot_application_1/src/screens/spots/spot_view.dart';
 import 'package:followspot_application_1/src/settings/settings_controller.dart';
 import 'package:followspot_application_1/src/settings/settings_view.dart';
@@ -137,6 +138,7 @@ class _MyMenuBarState extends State<MyMenuBar> {
             label: 'Open',
             onPressed: () async {
               FilePickerResult? result = await FilePicker.platform.pickFiles(
+                  lockParentWindow: true,
                   allowMultiple: false,
                   dialogTitle: 'Open a Show File',
                   allowedExtensions: ['spot', 'fws']);
@@ -248,6 +250,17 @@ class _MyMenuBarState extends State<MyMenuBar> {
             },
             shortcut: const SingleActivator(LogicalKeyboardKey.keyM,
                 control: true, shift: true),
+          ),
+          MenuEntry(
+            label: 'Gel Frames',
+            onPressed: () {
+              Navigator.restorablePushNamed(
+                  context, SpotColorEditView.routeName);
+
+              setState(() {
+                _lastSelection = 'SpotColorEditView';
+              });
+            },
           ),
           MenuEntry(
             label: 'Settings',

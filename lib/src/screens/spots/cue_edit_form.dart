@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:followspot_application_1/src/data/gel_colors.dart';
 import 'package:followspot_application_1/src/models/cue.dart';
 import 'package:followspot_application_1/src/models/show_model.dart';
 
@@ -134,12 +135,25 @@ class CueEditForm extends StatelessWidget {
                 ),
                 FormBuilderCheckboxGroup(
                   name: 'frames',
+                  wrapSpacing: 8,
                   decoration:
                       const InputDecoration(label: Text('Color Frames')),
                   options: showModel.show.spotList
                       .singleWhere((element) => element.number == cue.spot)
                       .frames
-                      .map((e) => FormBuilderFieldOption(value: e))
+                      .map((e) => FormBuilderFieldOption(
+                            value: e,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.circle,
+                                  color: getGelHex(e),
+                                ),
+                                Text(e)
+                              ],
+                            ),
+                          ))
                       .toList(),
                   initialValue: cue.frames,
                 ),

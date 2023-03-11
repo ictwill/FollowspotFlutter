@@ -180,4 +180,15 @@ class ShowModel extends ChangeNotifier {
   }
 
   String getCurrentTime() => DateFormat('hh:mm:ss').format(DateTime.now());
+
+  void addFrame(int id) {
+    show.spotList.singleWhere((element) => element.id == id).frames.add('');
+    notifyListeners();
+  }
+
+  void updateFrame(int spotId, int index, String value) {
+    show.spotList.singleWhere((element) => element.id == spotId).frames[index] =
+        value;
+    notifyListeners();
+  }
 }
