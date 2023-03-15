@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:followspot_application_1/src/data/gel_colors.dart';
-import 'package:followspot_application_1/src/models/show_model.dart';
 import 'package:provider/provider.dart';
+
+import '../../data/gel_colors.dart';
+import '../../data/show_model.dart';
 
 class SpotColorEditView extends StatelessWidget {
   static const String routeName = '/spotcolor';

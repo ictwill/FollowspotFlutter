@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:followspot_application_1/src/screens/spots/cue_edit_form.dart';
 
+import '../../data/number_helpers.dart';
 import '../../models/cue.dart';
 import '../../models/maneuver.dart';
+import '../edit_cue/cue_edit_form.dart';
 
 class CueCard extends StatelessWidget {
   const CueCard({
@@ -17,11 +18,7 @@ class CueCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (item.id == 'blank') {
-      return const Expanded(
-        child: SizedBox(
-          height: 100,
-        ),
-      );
+      return const Expanded(child: SizedBox.square(dimension: 32.0));
     } else {
       return Expanded(
         child: Card(
@@ -52,7 +49,7 @@ class CueCard extends StatelessWidget {
                             .titleMedium!
                             .copyWith(
                                 color: maneuver?.getContrastingTextColor() ??
-                                    Theme.of(context).colorScheme.onPrimary,
+                                    Theme.of(context).colorScheme.onBackground,
                                 fontWeight: FontWeight.bold)),
                   ),
                   Expanded(
@@ -140,18 +137,3 @@ class CueCard extends StatelessWidget {
     }
   }
 }
-
-String validateIntensity({int? intensity}) =>
-    intensity != null && intensity >= 0 ? '$intensity %' : '';
-
-String validateTime({int? time}) => time != null && time >= 0 ? '$time ct' : '';
-String deleteTrailing(double number) {
-  var string = number.toString();
-  while (string.endsWith('0') && string.contains('.0')) {
-    string = _dropLast(string);
-    if (string.endsWith('.')) return _dropLast(string);
-  }
-  return string;
-}
-
-String _dropLast(string) => string.substring(0, string.length - 1);

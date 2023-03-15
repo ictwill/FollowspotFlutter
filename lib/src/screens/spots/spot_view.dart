@@ -1,19 +1,17 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:followspot_application_1/src/models/show_model.dart';
-import 'package:followspot_application_1/src/screens/pdf_preview_screen.dart';
-import 'package:followspot_application_1/src/screens/spots/spot_cues.dart';
-import 'package:followspot_application_1/src/screens/spots/spot_tabs.dart';
-import 'package:followspot_application_1/src/settings/settings_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../models/cue.dart';
-import '../../my_menu_bar.dart';
+import '../../data/show_model.dart';
+import '../../settings/settings_controller.dart';
+import '../printing/pdf_preview_screen.dart';
+import '../window_components/my_menu_bar.dart';
 import '../../settings/settings_view.dart';
-import 'cue_edit_form.dart';
-import 'status_bar.dart';
+import '../window_components/status_bar.dart';
+import 'spot_cues.dart';
+import 'spot_tabs.dart';
 
 /// Displays a list of Cues.
 class SpotView extends StatelessWidget {
@@ -81,14 +79,6 @@ class SpotView extends StatelessWidget {
     );
   }
 }
-
-Future<dynamic> navigateNewCue(BuildContext context, int spot) =>
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return CueEditForm(cue: Cue(id: const Uuid().v4(), spot: spot));
-      },
-    );
 
 class BlankScreen extends StatelessWidget {
   const BlankScreen({

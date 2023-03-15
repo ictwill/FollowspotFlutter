@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:followspot_application_1/src/models/cue.dart';
-import 'package:followspot_application_1/src/screens/spots/spot_view.dart';
 import 'package:provider/provider.dart';
 
-import '../../models/show_model.dart';
+import '../../data/show_model.dart';
+import '../../models/cue.dart';
+import '../navigation.dart';
 
 class SpotTabs extends StatelessWidget {
   const SpotTabs({super.key});

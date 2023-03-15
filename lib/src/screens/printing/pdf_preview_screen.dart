@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:followspot_application_1/src/models/show.dart';
-import 'package:followspot_application_1/src/screens/printing.dart';
-import 'package:followspot_application_1/src/settings/settings_controller.dart';
 import 'package:printing/printing.dart';
+
+import '../../models/show.dart';
+import '../../settings/settings_controller.dart';
+import '../../settings/settings_view.dart';
+import '../preferences/show_info_edit_view.dart';
+import 'printing.dart';
 
 enum PrintMargins { top, left, right, bottom }
 
@@ -75,16 +78,20 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
         },
         shouldRepaint: shouldRedraw,
         useActions: true,
-        actions: const [
-          // IconButton(
-          //   icon: const Icon(Icons.settings),
-          //   onPressed: () {
-          //     // Navigate to the settings page. If the user leaves and returns
-          //     // to the app after it has been killed while running in the
-          //     // background, the navigation stack is restored.
-          //     Navigator.restorablePushNamed(context, SettingsView.routeName);
-          //   },
-          // ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.restorablePushNamed(context, SettingsView.routeName);
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.info_outline_rounded),
+            onPressed: () {
+              Navigator.restorablePushNamed(
+                  context, ShowInfoEditView.routeName);
+            },
+          ),
         ],
         build: (format) => makePdf(format, widget.show, selectedSpotindex),
       ),

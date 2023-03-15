@@ -3,15 +3,16 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:followspot_application_1/src/data/dummy_show.dart';
-import 'package:followspot_application_1/src/models/cue.dart';
-import 'package:followspot_application_1/src/models/show.dart';
-import 'package:followspot_application_1/src/models/spot.dart';
-import 'package:followspot_application_1/src/screens/spots/cue_card.dart';
+import 'package:followspot_application_1/src/settings/settings_controller.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
-import 'maneuver.dart';
+import '../models/cue.dart';
+import '../models/maneuver.dart';
+import '../models/show.dart';
+import '../models/spot.dart';
+import '../screens/spots/cue_card.dart';
+import 'dummy_show.dart';
 
 class ShowModel extends ChangeNotifier {
   Show show = Show(info: ShowInfo(date: DateTime(0)));
@@ -24,14 +25,20 @@ class ShowModel extends ChangeNotifier {
 
   String message = '';
 
+  late SettingsController settings;
+
+  ShowModel(SettingsController settingsController) {
+    settings = settingsController;
+  }
+
   Cue findCue(int spot, double number) {
     if (show.spotList[spot].cues.isNotEmpty) {
       return show.spotList[spot].cues.firstWhere(
         (element) => element.number == number,
-        orElse: () => Cue(id: 'blank', spot: spot),
+        orElse: () => Cue(id: 'blank', number: number, spot: spot),
       );
     } else {
-      return Cue(id: 'blank', spot: spot);
+      return Cue(id: 'blank', number: number, spot: spot);
     }
   }
 
@@ -45,6 +52,7 @@ class ShowModel extends ChangeNotifier {
     if (oldCue.spot != newCue.spot) index = getSpotIndex(newCue.spot);
     addCue(index, newCue);
     refreshSpot(index);
+    notifyListeners();
   }
 
   void refreshSpot(int index) {
@@ -103,28 +111,7 @@ class ShowModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void openShow(String showFromFile, File file) async {
-    Map<String, dynamic> valueMap = await jsonDecode(showFromFile);
-    show = Show.fromJson(valueMap);
-    show.maneuverList.toList();
-    show.filename = file.path;
-
-    usedNumbers = show.cueNumbers();
-    List<Maneuver> allManeuvers = [];
-
-    show.spotList.forEach((e) => e.cues.forEach((e) {
-          if (e.maneuver != null) {
-            show.getManeuver(e.maneuver!);
-          }
-        }));
-    allManeuvers.sort((a, b) => a.name.compareTo(b.name));
-    allManeuvers.forEach((element) {
-      show.addManeuver(element);
-    });
-    message = 'Opened ${file.path} - ${getCurrentTime()}';
-    notifyListeners();
-  }
-
+  ///     Maneuvers
   void updateManeuverColor(Maneuver maneuver, Color color) {
     show.maneuverList
         .singleWhere((element) => element.name == maneuver.name)
@@ -152,34 +139,62 @@ class ShowModel extends ChangeNotifier {
   }
 
   Future<void> saveAs() async {
-    {
-      String? outputFile = await FilePicker.platform.saveFile(
+    String? outputFile = await FilePicker.platform.saveFile(
         dialogTitle: 'Please select an output file:',
-        fileName: '${show.info.title}.spot',
-      );
+        allowedExtensions: ['spot'],
+        type: FileType.custom);
 
-      if (outputFile == null) {
-        // User canceled the picker
-      } else {
-        save(outputFile);
+    if (outputFile == null) {
+      // User canceled the picker
+    } else {
+      if (!outputFile.endsWith('.spot')) {
+        outputFile = '${outputFile.split('.').first}.spot';
       }
-
-      debugPrint('Save as selected');
+      save(outputFile);
     }
+    debugPrint('Save as $outputFile');
+  }
+
+  void openShow(String showFromFile, File file) async {
+    Map<String, dynamic> valueMap = await jsonDecode(showFromFile);
+    show = Show.fromJson(valueMap);
+    show.maneuverList.toList();
+    show.filename = file.path;
+
+    usedNumbers = show.cueNumbers();
+    List<Maneuver> allManeuvers = [];
+
+    for (var e in show.spotList) {
+      for (var e in e.cues) {
+        if (e.maneuver != null) {
+          show.getManeuver(e.maneuver!);
+        }
+      }
+    }
+    allManeuvers.sort((a, b) => a.name.compareTo(b.name));
+    for (var element in allManeuvers) {
+      show.addManeuver(element);
+    }
+    message = 'Opened: ${file.uri.pathSegments.last} @ ${getCurrentTime()}';
+    settings.addRecentFile(file.path);
+
+    notifyListeners();
   }
 
   void save(String outputFile) {
+    updateTime();
     File file = File(outputFile);
     file.writeAsString(jsonEncode(show.toJson()));
 
     file.create(recursive: true);
     show.filename = outputFile;
+    settings.addRecentFile(outputFile);
 
-    message = 'Saved ${show.filename} - ${getCurrentTime()}';
+    message = 'Saved: ${file.uri.pathSegments.last} @ ${getCurrentTime()}';
     notifyListeners();
   }
 
-  String getCurrentTime() => DateFormat('hh:mm:ss').format(DateTime.now());
+  String getCurrentTime() => DateFormat('HH:mm:ss').format(DateTime.now());
 
   void addFrame(int id) {
     show.spotList.singleWhere((element) => element.id == id).frames.add('');
@@ -191,4 +206,25 @@ class ShowModel extends ChangeNotifier {
         value;
     notifyListeners();
   }
+
+  void updateShow(Info field, String value) {
+    switch (field) {
+      case Info.title:
+        show.info.title = value;
+        break;
+      case Info.location:
+        show.info.location = value;
+        break;
+      case Info.ld:
+        show.info.ld = value;
+        break;
+      case Info.ald:
+        show.info.ald = value;
+        break;
+      default:
+    }
+    notifyListeners();
+  }
+
+  void updateTime() => show.info.date = DateTime.now();
 }

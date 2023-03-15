@@ -67,21 +67,29 @@ class Show {
   }
 }
 
+enum Info {
+  title,
+  location,
+  ld,
+  ald,
+  date,
+}
+
 @JsonSerializable()
 class ShowInfo {
   final int id;
-  final String title;
-  final String location;
-  final String ld;
-  final String ald;
+  String title;
+  String location;
+  String ld;
+  String ald;
   DateTime date;
 
   ShowInfo(
       {this.id = -1,
-      this.title = '-',
-      this.location = '-',
-      this.ld = '-',
-      this.ald = '-',
+      this.title = '',
+      this.location = '',
+      this.ld = '',
+      this.ald = '',
       required this.date});
 
   factory ShowInfo.fromJson(Map<String, dynamic> json) =>

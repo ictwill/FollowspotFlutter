@@ -2,6 +2,37 @@ import 'dart:core';
 
 import 'package:flutter/material.dart';
 
+Color getGelHex(String string) {
+  late Map<String, String> brand;
+
+  String color = 'FF000000';
+
+  if (string.isNotEmpty) {
+    switch (string[0]) {
+      case 'L':
+        brand = lee;
+        break;
+      case 'R':
+        brand = rosco;
+        break;
+      case 'G':
+        brand = gam;
+        break;
+      case 'P':
+        brand = pcolor;
+        break;
+      default:
+        color = 'FF000000';
+        break;
+    }
+
+    color = 'FF${brand[string.substring(1)]}';
+    if (color.isEmpty || color == 'FF') color = 'FF000000';
+  }
+
+  return Color(int.tryParse(color, radix: 16) ?? 0xFF000000).withOpacity(1.0);
+}
+
 const gam = {
   'NCR3': 'FDF3F7',
   'NCR6': 'F8E6DA',
@@ -1295,34 +1326,3 @@ const pcolor = {
   '6500': 'B00202',
   '8100': 'FFFFFF',
 };
-
-Color getGelHex(String string) {
-  late Map<String, String> brand;
-
-  String color = 'FF000000';
-
-  if (string.isNotEmpty) {
-    switch (string[0]) {
-      case 'L':
-        brand = lee;
-        break;
-      case 'R':
-        brand = rosco;
-        break;
-      case 'G':
-        brand = gam;
-        break;
-      case 'P':
-        brand = pcolor;
-        break;
-      default:
-        color = 'FF000000';
-        break;
-    }
-
-    color = 'FF${brand[string.substring(1)]}';
-    if (color.isEmpty || color == 'FF') color = 'FF000000';
-  }
-
-  return Color(int.tryParse(color, radix: 16) ?? 0xFF000000).withOpacity(1.0);
-}

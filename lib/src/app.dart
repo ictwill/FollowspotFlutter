@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:followspot_application_1/src/models/show_model.dart';
-import 'package:followspot_application_1/src/screens/maneuver_edit_view.dart';
-import 'package:followspot_application_1/src/screens/pdf_preview_screen.dart';
 import 'package:provider/provider.dart';
 
-import 'screens/spots/spot_color_edit_view.dart';
+import 'data/show_model.dart';
+import 'screens/preferences/spot_color_edit_view.dart';
+import 'screens/preferences/maneuver_edit_view.dart';
+import 'screens/preferences/show_info_edit_view.dart';
+import 'screens/printing/pdf_preview_screen.dart';
 import 'screens/spots/spot_view.dart';
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
+import 'styles.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
@@ -39,11 +41,8 @@ class MyApp extends StatelessWidget {
           ],
           onGenerateTitle: (BuildContext context) =>
               AppLocalizations.of(context)!.appTitle,
-          theme: ThemeData(
-              canvasColor: Colors.grey.shade200,
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey)
-                  .copyWith(secondary: Colors.amber)),
-          darkTheme: ThemeData.dark(),
+          theme: followspotAppTheme(),
+          darkTheme: followspotAppThemeDark(),
           themeMode: settingsController.themeMode,
           // Define a function to handle named routes in order to support
           // Flutter web url navigation and deep linking.
@@ -60,6 +59,8 @@ class MyApp extends StatelessWidget {
                         controller: settingsController);
                   case ManeuverEditView.routeName:
                     return const ManeuverEditView();
+                  case ShowInfoEditView.routeName:
+                    return ShowInfoEditView();
                   case SpotColorEditView.routeName:
                     return SpotColorEditView();
                   case SpotView.routeName:
@@ -73,5 +74,23 @@ class MyApp extends StatelessWidget {
         );
       },
     );
+  }
+
+  ThemeData followspotAppThemeDark() {
+    return ThemeData.dark().copyWith(
+        textTheme: const TextTheme(
+      bodyMedium: Styles.textDefault,
+      labelLarge: Styles.menuTextStyle,
+    ));
+  }
+
+  ThemeData followspotAppTheme() {
+    return ThemeData(
+        canvasColor: Colors.grey.shade200,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
+        textTheme: const TextTheme(
+          bodyMedium: Styles.textDefault,
+          labelLarge: Styles.menuTextStyle,
+        ));
   }
 }

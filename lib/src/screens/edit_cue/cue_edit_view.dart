@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:followspot_application_1/src/models/cue.dart';
-import 'package:followspot_application_1/src/models/maneuver.dart';
-import 'package:followspot_application_1/src/models/show_model.dart';
-import 'package:followspot_application_1/src/screens/spots/cue_card.dart';
-
 import 'package:provider/provider.dart';
+
+import '../../data/number_helpers.dart';
+import '../../data/show_model.dart';
+import '../../models/cue.dart';
+import '../../models/maneuver.dart';
 
 /// Displays detailed information about a SampleItem.
 class CueEditView extends StatefulWidget {
@@ -230,17 +230,6 @@ class _CueEditViewState extends State<CueEditView> {
     );
   }
 
-  String? validateDouble(value) {
-    if (value != null && value.isNotEmpty) {
-      if (double.tryParse(value) == null) {
-        return 'Invalid input';
-      } else if (double.parse(value) <= 0.0) {
-        return 'Must be greater than zero';
-      }
-    }
-    return null;
-  }
-
   Cue _createCue(Maneuver? maneuver) => Cue(
         id: widget.cue.id,
         number: double.parse(numberControl.text),
@@ -255,14 +244,3 @@ class _CueEditViewState extends State<CueEditView> {
         spot: widget.spot,
       );
 }
-
-String deleteTrailing(double number) {
-  var string = number.toString();
-  while (string.endsWith('0') && string.contains('.0')) {
-    string = _dropLast(string);
-    if (string.endsWith('.')) return _dropLast(string);
-  }
-  return string;
-}
-
-String _dropLast(string) => string.substring(0, string.length - 1);

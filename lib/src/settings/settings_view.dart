@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:followspot_application_1/src/screens/pdf_preview_screen.dart';
 import 'package:pdf/pdf.dart';
 
+import '../screens/printing/pdf_preview_screen.dart';
 import 'settings_controller.dart';
 
 /// Displays the various settings that can be customized by the user.

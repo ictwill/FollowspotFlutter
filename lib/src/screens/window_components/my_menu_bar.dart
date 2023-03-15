@@ -1,20 +1,19 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:followspot_application_1/src/models/show_model.dart';
-import 'package:followspot_application_1/src/screens/maneuver_edit_view.dart';
-import 'package:followspot_application_1/src/screens/pdf_preview_screen.dart';
-import 'package:followspot_application_1/src/screens/spots/spot_color_edit_view.dart';
-import 'package:followspot_application_1/src/screens/spots/spot_view.dart';
-import 'package:followspot_application_1/src/settings/settings_controller.dart';
-import 'package:followspot_application_1/src/settings/settings_view.dart';
 import 'package:provider/provider.dart';
 
-import 'models/cue.dart';
-import 'models/show.dart';
+import '../../data/show_model.dart';
+import '../../models/cue.dart';
+import '../../settings/settings_controller.dart';
+import '../../settings/settings_view.dart';
+import '../navigation.dart';
+import '../preferences/maneuver_edit_view.dart';
+import '../preferences/show_info_edit_view.dart';
+import '../preferences/spot_color_edit_view.dart';
+import '../printing/pdf_preview_screen.dart';
 
 final _digitKeys = {
   1: LogicalKeyboardKey.digit1,
@@ -45,17 +44,24 @@ class MenuEntry {
 
   static List<Widget> build(List<MenuEntry> selections) {
     Widget buildSelection(MenuEntry selection) {
-      if (selection.menuChildren != null) {
+      if (selection.label == 'divider') {
+        return const PopupMenuDivider();
+      } else if (selection.menuChildren != null) {
         return SubmenuButton(
           menuChildren: MenuEntry.build(selection.menuChildren!),
-          child: Text(selection.label),
+          child: Text(
+            selection.label,
+          ),
+        );
+      } else {
+        return MenuItemButton(
+          shortcut: selection.shortcut,
+          onPressed: selection.onPressed,
+          child: Text(
+            selection.label,
+          ),
         );
       }
-      return MenuItemButton(
-        shortcut: selection.shortcut,
-        onPressed: selection.onPressed,
-        child: Text(selection.label),
-      );
     }
 
     return selections.map<Widget>(buildSelection).toList();
@@ -118,6 +124,8 @@ class _MyMenuBarState extends State<MyMenuBar> {
   }
 
   List<MenuEntry> _getMenus({required ShowModel showModel}) {
+    const menuDivider = MenuEntry(label: 'divider');
+
     final List<MenuEntry> result = <MenuEntry>[
       //File Menu
       MenuEntry(
@@ -133,6 +141,7 @@ class _MyMenuBarState extends State<MyMenuBar> {
             shortcut: const SingleActivator(LogicalKeyboardKey.keyN,
                 control: true, shift: true),
           ),
+          menuDivider,
           //Open File
           MenuEntry(
             label: 'Open',
@@ -154,41 +163,71 @@ class _MyMenuBarState extends State<MyMenuBar> {
             shortcut:
                 const SingleActivator(LogicalKeyboardKey.keyO, control: true),
           ),
+          MenuEntry(
+            label: 'Open Recent...',
+            menuChildren: widget.settings.recentFiles.reversed
+                    .map(
+                      (e) => MenuEntry(
+                        label: e,
+                        onPressed: () async {
+                          File file = File(e);
+                          String data = await file.readAsString();
+                          showModel.openShow(data, file);
+                        },
+                      ),
+                    )
+                    .toList() ??
+                [],
+          ),
           //Save File
-          MenuEntry(
-            label: 'Save',
-            onPressed: () async {
-              if (showModel.show.filename != null) {
-                showModel.save(showModel.show.filename!);
-              } else {
-                showModel.saveAs();
-              }
-            },
-            shortcut:
-                const SingleActivator(LogicalKeyboardKey.keyS, control: true),
-          ),
+          if (showModel.show.filename != null &&
+              showModel.show.filename!.isNotEmpty)
+            MenuEntry(
+              label: 'Save',
+              onPressed: () async {
+                if (showModel.show.filename != null) {
+                  showModel.save(showModel.show.filename!);
+                  widget.settings.addRecentFile(showModel.show.filename!);
+                } else {
+                  showModel.saveAs();
+                }
+              },
+              shortcut:
+                  const SingleActivator(LogicalKeyboardKey.keyS, control: true),
+            )
+          else
+            const MenuEntry(label: 'Save'),
           //Save as
-          MenuEntry(
-            label: 'Save As..',
-            onPressed: () async {
-              showModel.saveAs();
-            },
-            shortcut: const SingleActivator(LogicalKeyboardKey.keyS,
-                control: true, shift: true),
-          ),
+          if (showModel.show.info.title.isNotEmpty ||
+              showModel.show.spotList.isNotEmpty)
+            MenuEntry(
+              label: 'Save As..',
+              onPressed: () async {
+                showModel.saveAs();
+              },
+              shortcut: const SingleActivator(LogicalKeyboardKey.keyS,
+                  control: true, shift: true),
+            )
+          else
+            const MenuEntry(label: 'Save As..'),
+          const MenuEntry(label: 'divider'),
           //Print Preview
-          MenuEntry(
-            label: 'Print Preview',
-            onPressed: () {
-              Navigator.restorablePushNamed(
-                  context, PdfPreviewScreen.routeName);
-              setState(() {
-                _lastSelection = 'About';
-              });
-            },
-            shortcut:
-                const SingleActivator(LogicalKeyboardKey.keyP, control: true),
-          ),
+          if (showModel.show.spotList.isNotEmpty)
+            MenuEntry(
+              label: 'Print Preview',
+              onPressed: () {
+                Navigator.restorablePushNamed(
+                    context, PdfPreviewScreen.routeName);
+                setState(() {
+                  _lastSelection = 'About';
+                });
+              },
+              shortcut:
+                  const SingleActivator(LogicalKeyboardKey.keyP, control: true),
+            )
+          else
+            const MenuEntry(label: 'Print Preview'),
+          menuDivider,
           // About
           MenuEntry(
             label: 'About',
@@ -203,11 +242,15 @@ class _MyMenuBarState extends State<MyMenuBar> {
               });
             },
           ),
-          MenuEntry(
-              label: 'Close Show',
-              onPressed: () {
-                showModel.closeShow();
-              }),
+          if (showModel.show.info.title.isNotEmpty ||
+              showModel.show.spotList.isNotEmpty)
+            MenuEntry(
+                label: 'Close Show',
+                onPressed: () {
+                  showModel.closeShow();
+                })
+          else
+            const MenuEntry(label: 'Close Show'),
           MenuEntry(
               label: 'Dummy Show',
               onPressed: () {
@@ -238,6 +281,7 @@ class _MyMenuBarState extends State<MyMenuBar> {
                   },
                 )
           ]),
+          menuDivider,
           MenuEntry(
             label: 'Maneuvers',
             onPressed: () {
@@ -262,6 +306,18 @@ class _MyMenuBarState extends State<MyMenuBar> {
               });
             },
           ),
+          MenuEntry(
+            label: 'Show Info',
+            onPressed: () {
+              Navigator.restorablePushNamed(
+                  context, ShowInfoEditView.routeName);
+
+              setState(() {
+                _lastSelection = 'ShowInfoEditView';
+              });
+            },
+          ),
+          menuDivider,
           MenuEntry(
             label: 'Settings',
             onPressed: () {

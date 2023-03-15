@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../models/show_model.dart';
+import '../../data/show_model.dart';
 
 class StatusBar extends StatelessWidget {
   const StatusBar({
@@ -17,16 +17,22 @@ class StatusBar extends StatelessWidget {
         builder: (context, showModel, child) => Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
+            for (var spot in showModel.show.spotList)
+              Row(
                 mainAxisSize: MainAxisSize.min,
-                children: showModel.show.spotList
-                    .map((e) => Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 64.0),
-                          child:
-                              Text('Spot ${e.number} : ${e.cues.length} cues'),
-                        ))
-                    .toList()),
-            Text(showModel.message),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child:
+                        Text('Spot ${spot.number} : ${spot.cues.length} cues'),
+                  )
+                ],
+              ),
+            Expanded(
+                child: Text(
+              showModel.message,
+              textAlign: TextAlign.end,
+            )),
           ],
         ),
       ),

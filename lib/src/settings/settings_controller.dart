@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:followspot_application_1/src/screens/pdf_preview_screen.dart';
 import 'package:pdf/pdf.dart';
 
+import '../screens/printing/pdf_preview_screen.dart';
 import 'settings_service.dart';
 
 /// A class that many Widgets can interact with to read user settings, update
@@ -14,66 +14,68 @@ class SettingsController with ChangeNotifier {
 
   // Make SettingsService a private variable so it is not used directly.
   final SettingsService _settingsService;
-  PdfPageFormat pageFormat = PdfPageFormat.letter;
 
-  changePageFormat(PdfPageFormat format) {
-    pageFormat = format;
-    notifyListeners();
-  }
-
-  // Make ThemeMode a private variable so it is not updated directly without
-  // also persisting the changes with the SettingsService.
   late ThemeMode _themeMode;
-
-  // Allow Widgets to read the user's preferred ThemeMode.
   ThemeMode get themeMode => _themeMode;
 
-  /// Load the user's settings from the SettingsService. It may load from a
-  /// local database or the internet. The controller only knows it can load the
-  /// settings from the service.
+  late List<String> _recentFiles;
+  List<String> get recentFiles => _recentFiles;
+
+  late PdfPageFormat _pageFormat;
+  PdfPageFormat get pageFormat => _pageFormat;
+
   Future<void> loadSettings() async {
-    _themeMode = await _settingsService.themeMode();
+    _themeMode = await _settingsService.loadThemeMode();
+    _recentFiles = await _settingsService.loadRecentFileList();
+    _pageFormat = await _settingsService.loadPageFormat();
 
-    // Important! Inform listeners a change has occurred.
     notifyListeners();
   }
 
-  /// Update and persist the ThemeMode based on the user's selection.
   Future<void> updateThemeMode(ThemeMode? newThemeMode) async {
-    if (newThemeMode == null) return;
+    if (newThemeMode != null && newThemeMode != _themeMode) {
+      _themeMode = newThemeMode;
+      _settingsService.saveThemeMode(newThemeMode);
+    } else {
+      return;
+    }
 
-    // Do not perform any work if new and old ThemeMode are identical
-    if (newThemeMode == _themeMode) return;
-
-    // Otherwise, store the new ThemeMode in memory
-    _themeMode = newThemeMode;
-
-    // Important! Inform listeners a change has occurred.
     notifyListeners();
-
-    // Persist the changes to a local database or the internet using the
-    // SettingService.
-    await _settingsService.updateThemeMode(newThemeMode);
   }
 
-  setMargin(PrintMargins printMargins, double size) async {
+  Future<void> addRecentFile(String path) async {
+    List<String> files = _recentFiles.toList();
+    files.remove(path);
+    files.add(path);
+    _recentFiles = files;
+
+    _settingsService.saveRecentFileList(_recentFiles);
+    notifyListeners();
+  }
+
+  Future<void> changePageFormat(PdfPageFormat format) async {
+    _pageFormat = format;
+    notifyListeners();
+  }
+
+  Future<void> setMargin(PrintMargins printMargins, double size) async {
     double value = size * PdfPageFormat.inch;
 
     switch (printMargins) {
       case PrintMargins.top:
-        pageFormat = pageFormat.copyWith(marginTop: value);
+        _pageFormat = _pageFormat.copyWith(marginTop: value);
         break;
       case PrintMargins.left:
-        pageFormat = pageFormat.copyWith(marginLeft: value);
+        _pageFormat = _pageFormat.copyWith(marginLeft: value);
         break;
       case PrintMargins.right:
-        pageFormat = pageFormat.copyWith(marginRight: value);
+        _pageFormat = _pageFormat.copyWith(marginRight: value);
         break;
       default:
-        pageFormat = pageFormat.copyWith(marginBottom: value);
+        _pageFormat = _pageFormat.copyWith(marginBottom: value);
     }
 
+    _settingsService.savePageFormat(_pageFormat);
     notifyListeners();
-    await _settingsService.updatePageFormat(pageFormat);
   }
 }

@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 
 class Styles {
   static const _textSizeLarge = 25.0;
-  static const _textSizeDefault = 16.0;
+  static const _textSizeDefault = 12.0;
+  static const _fontWeightDefault = FontWeight.w400;
   static final _textColorDefault = _hexToColor('000000');
 
-  static final textDefault = TextStyle(
+  static const menuTextStyle =
+      TextStyle(fontWeight: _fontWeightDefault, fontSize: _textSizeDefault);
+
+  static const textDefault = TextStyle(
     fontSize: _textSizeDefault,
-    color: _textColorDefault,
+    fontWeight: _fontWeightDefault,
   );
 
   static final textLarge = TextStyle(

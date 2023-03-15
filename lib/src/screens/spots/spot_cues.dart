@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../models/show_model.dart';
+import '../../data/show_model.dart';
 
 class SpotCues extends StatelessWidget {
   const SpotCues({super.key});
@@ -37,7 +37,7 @@ class SpotCues extends StatelessWidget {
     return Consumer<ShowModel>(
       builder: (context, showModel, child) {
         return LayoutBuilder(builder: (context, constraints) {
-          if (constraints.maxWidth > 960) {
+          if (constraints.maxWidth > 1000) {
             return _buildMatchedMultiList(showModel);
           } else {
             return _buildSingleCueList(showModel);
@@ -53,7 +53,7 @@ class SpotCues extends StatelessWidget {
       padding: const EdgeInsets.all(12.0),
       itemBuilder: (BuildContext context, int index) {
         return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             showModel.getCueCard(0, showModel.usedNumbers[index]),
           ],
@@ -66,7 +66,7 @@ class SpotCues extends StatelessWidget {
     return ListView.builder(
       restorationId: 'spotListView',
       itemCount: showModel.usedNumbers.length,
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.all(24.0),
       itemBuilder: (BuildContext context, int index) {
         final number = showModel.usedNumbers[index];
         return Row(

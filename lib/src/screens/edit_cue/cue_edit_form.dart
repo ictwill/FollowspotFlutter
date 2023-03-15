@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:followspot_application_1/src/data/gel_colors.dart';
-import 'package:followspot_application_1/src/models/cue.dart';
-import 'package:followspot_application_1/src/models/show_model.dart';
-
 import 'package:provider/provider.dart';
+
+import '../../data/gel_colors.dart';
+import '../../data/number_helpers.dart';
+import '../../data/show_model.dart';
+import '../../models/cue.dart';
 
 class CueEditForm extends StatelessWidget {
   final _formKey = GlobalKey<FormBuilderState>();
@@ -168,29 +169,5 @@ class CueEditForm extends StatelessWidget {
         );
       },
     );
-  }
-}
-
-String? validateDouble(value) {
-  if (value != null && value.isNotEmpty) {
-    if (double.tryParse(value) == null) {
-      return 'Invalid input';
-    } else if (double.parse(value) <= 0.0) {
-      return 'Must be greater than zero';
-    }
-  }
-  return null;
-}
-
-String deleteTrailing(double number) {
-  String string = number.toString();
-  if (string.contains('.')) {
-    string = string.replaceAll(RegExp(r'0+$'), '');
-    string = string.replaceAll(RegExp(r'\.$'), '');
-  }
-  if (string == '0') {
-    return '';
-  } else {
-    return string;
   }
 }

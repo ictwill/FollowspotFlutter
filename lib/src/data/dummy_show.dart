@@ -1,12 +1,10 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:followspot_application_1/src/models/cue.dart';
-import 'package:followspot_application_1/src/models/spot.dart';
 import 'package:uuid/uuid.dart';
 
+import '../models/cue.dart';
 import '../models/maneuver.dart';
 import '../models/show.dart';
+import '../models/spot.dart';
 
 Show dummyShow() {
   Show show = Show(
