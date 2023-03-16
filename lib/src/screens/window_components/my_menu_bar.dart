@@ -166,18 +166,17 @@ class _MyMenuBarState extends State<MyMenuBar> {
           MenuEntry(
             label: 'Open Recent...',
             menuChildren: widget.settings.recentFiles.reversed
-                    .map(
-                      (e) => MenuEntry(
-                        label: e,
-                        onPressed: () async {
-                          File file = File(e);
-                          String data = await file.readAsString();
-                          showModel.openShow(data, file);
-                        },
-                      ),
-                    )
-                    .toList() ??
-                [],
+                .map(
+                  (e) => MenuEntry(
+                    label: e,
+                    onPressed: () async {
+                      File file = File(e);
+                      String data = await file.readAsString();
+                      showModel.openShow(data, file);
+                    },
+                  ),
+                )
+                .toList(),
           ),
           //Save File
           if (showModel.show.filename != null &&

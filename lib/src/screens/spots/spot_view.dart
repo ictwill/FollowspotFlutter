@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:followspot_application_1/src/screens/spots/spot_tab_view.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -33,11 +34,21 @@ class SpotView extends StatelessWidget {
             body: Column(
               children: [
                 MyMenuBar(settings: settings),
-                if (showModel.show.spotList.isNotEmpty) const SpotTabs(),
                 if (showModel.show.spotList.isEmpty)
                   const BlankScreen()
                 else
-                  const SpotCues(),
+                  Expanded(
+                    child: LayoutBuilder(
+                      builder:
+                          (BuildContext context, BoxConstraints constraints) {
+                        if (constraints.maxWidth > 1000) {
+                          return const SpotCues();
+                        } else {
+                          return const SpotTabView();
+                        }
+                      },
+                    ),
+                  ),
                 const StatusBar()
               ],
             ),

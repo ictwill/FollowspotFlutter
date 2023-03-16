@@ -21,7 +21,7 @@ void main() async {
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     WidgetsFlutterBinding.ensureInitialized();
     setWindowTitle('Follow');
-    setWindowMinSize(const Size(800, 400));
+    setWindowMinSize(const Size(400, 400));
   }
 
   // Run the app and pass in the SettingsController. The app listens to the

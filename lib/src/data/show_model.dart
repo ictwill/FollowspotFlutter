@@ -31,14 +31,24 @@ class ShowModel extends ChangeNotifier {
     settings = settingsController;
   }
 
-  Cue findCue(int spot, double number) {
-    if (show.spotList[spot].cues.isNotEmpty) {
-      return show.spotList[spot].cues.firstWhere(
+  Cue findCue(int spotIndex, double number) {
+    if (show.spotList[spotIndex].cues.isNotEmpty) {
+      return show.spotList[spotIndex].cues.firstWhere(
         (element) => element.number == number,
-        orElse: () => Cue(id: 'blank', number: number, spot: spot),
+        orElse: () {
+          return Cue(
+            id: 'spacer',
+            number: number,
+            spot: spotIndex,
+          );
+        },
       );
     } else {
-      return Cue(id: 'blank', number: number, spot: spot);
+      return Cue(
+        id: 'spacer',
+        number: number,
+        spot: spotIndex,
+      );
     }
   }
 
@@ -135,7 +145,12 @@ class ShowModel extends ChangeNotifier {
   Widget getCueCard(int spot, double number) {
     Cue cue = findCue(spot, number);
     Maneuver? maneuver = show.getManeuver(cue.maneuver);
-    return CueCard(item: cue, maneuver: maneuver);
+    return Visibility(
+        maintainState: true,
+        maintainAnimation: true,
+        maintainSize: true,
+        visible: cue.id == 'spacer' ? false : true,
+        child: CueCard(item: cue, maneuver: maneuver));
   }
 
   Future<void> saveAs() async {
