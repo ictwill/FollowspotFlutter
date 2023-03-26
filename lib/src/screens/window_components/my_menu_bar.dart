@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -152,11 +150,7 @@ class _MyMenuBarState extends State<MyMenuBar> {
                   dialogTitle: 'Open a Show File',
                   allowedExtensions: ['spot', 'fws']);
               if (result != null) {
-                // User
-                File file = File(result.files.single.path!);
-                String data = await file.readAsString();
-
-                showModel.openShow(data, file);
+                showModel.openShow(result.files.single.path!);
               }
               debugPrint('Open File selected');
             },
@@ -170,9 +164,7 @@ class _MyMenuBarState extends State<MyMenuBar> {
                   (e) => MenuEntry(
                     label: e,
                     onPressed: () async {
-                      File file = File(e);
-                      String data = await file.readAsString();
-                      showModel.openShow(data, file);
+                      showModel.openShow(e);
                     },
                   ),
                 )

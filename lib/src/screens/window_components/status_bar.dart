@@ -17,22 +17,23 @@ class StatusBar extends StatelessWidget {
         builder: (context, showModel, child) => Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            for (var spot in showModel.show.spotList)
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                for (var spot in showModel.show.spotList)
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child:
                         Text('Spot ${spot.number} : ${spot.cues.length} cues'),
                   )
-                ],
-              ),
-            Expanded(
-                child: Text(
+              ],
+            ),
+            Text(MediaQuery.of(context).size.width.toString()),
+            Text(
               showModel.message,
               textAlign: TextAlign.end,
-            )),
+            ),
           ],
         ),
       ),

@@ -22,7 +22,7 @@ class _ManeuverEditViewState extends State<ManeuverEditView> {
   @override
   Widget build(BuildContext context) {
     return Consumer<ShowModel>(
-      builder: (BuildContext context, showModel, Widget? child) => Scaffold(
+      builder: (BuildContext context, model, Widget? child) => Scaffold(
         appBar: AppBar(
           centerTitle: true,
           title: const Text('Maneuvers'),
@@ -43,15 +43,17 @@ class _ManeuverEditViewState extends State<ManeuverEditView> {
                 label: Text('Delete'),
               ),
             ],
-                rows: showModel.show.maneuverList
+                rows: model.show.maneuverList
                     .map(
                       (e) => DataRow(
                         cells: [
                           DataCell(
-                            Text(e.name),
-                            onTap: () {
-                              //TODO: Implement TextField Editing when selected
-                            },
+                            TextField(
+                              controller: TextEditingController(text: e.name),
+                              onSubmitted: (value) {
+                                model.updateManeuverName(e, value);
+                              },
+                            ),
                           ),
                           DataCell(
                             Icon(
@@ -65,7 +67,7 @@ class _ManeuverEditViewState extends State<ManeuverEditView> {
                                   await FlutterIconPicker.showIconPicker(
                                       context);
                               if (iconData != null) {
-                                showModel.updateManeuverIcon(e, iconData);
+                                model.updateManeuverIcon(e, iconData);
                               }
                             },
                           ),
@@ -87,7 +89,7 @@ class _ManeuverEditViewState extends State<ManeuverEditView> {
                                         actions: [
                                           ElevatedButton(
                                             onPressed: () {
-                                              showModel.updateManeuverColor(
+                                              model.updateManeuverColor(
                                                   e, pickerColor);
                                               Navigator.pop(context);
                                             },
@@ -103,7 +105,7 @@ class _ManeuverEditViewState extends State<ManeuverEditView> {
                           DataCell(IconButton(
                             icon: const Icon(Icons.delete),
                             onPressed: () {
-                              showModel.deleteManeuver(e);
+                              model.deleteManeuver(e);
                             },
                           ))
                         ],

@@ -53,16 +53,16 @@ class MyApp extends StatelessWidget {
                 switch (routeSettings.name) {
                   case SettingsView.routeName:
                     return SettingsView(controller: settingsController);
-                  case PdfPreviewScreen.routeName:
-                    return PdfPreviewScreen(
-                        show: Provider.of<ShowModel>(context).show,
-                        controller: settingsController);
                   case ManeuverEditView.routeName:
                     return const ManeuverEditView();
                   case ShowInfoEditView.routeName:
                     return ShowInfoEditView();
                   case SpotColorEditView.routeName:
                     return SpotColorEditView();
+                  case PdfPreviewScreen.routeName:
+                    return PdfPreviewScreen(
+                        show: Provider.of<ShowModel>(context).show,
+                        controller: settingsController);
                   case SpotView.routeName:
                   default:
                     return SpotView(

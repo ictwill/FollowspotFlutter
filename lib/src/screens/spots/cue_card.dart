@@ -46,18 +46,16 @@ class CueCard extends StatelessWidget {
                         fontWeight: FontWeight.bold)),
               ),
               Expanded(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-                  child: Column(
-                    children: [
-                      Table(
-                        columnWidths: const <int, TableColumnWidth>{},
-                        children: [
-                          TableRow(
-                            children: [
-                              TableCell(
-                                  child: Row(
+                child: Column(
+                  children: [
+                    Table(
+                      defaultColumnWidth: const FlexColumnWidth(),
+                      children: [
+                        TableRow(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(
@@ -71,53 +69,62 @@ class CueCard extends StatelessWidget {
                                   const SizedBox(width: 8.0),
                                   Text(maneuver?.name ?? '-'),
                                 ],
-                              )),
-                              Text(
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
                                 item.target,
                                 textAlign: TextAlign.center,
                               ),
-                              Text(
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
                                 item.size,
                                 textAlign: TextAlign.end,
                               ),
-                            ],
+                            ),
+                          ],
+                        ),
+                        TableRow(
+                          decoration: BoxDecoration(
+                            color: Colors.grey.withAlpha(32),
                           ),
-                          TableRow(
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Text(validateIntensity(
-                                    intensity: item.intensity)),
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                  validateIntensity(intensity: item.intensity)),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                item.frames.join(' + '),
+                                textAlign: TextAlign.center,
                               ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Text(
-                                  item.frames.join(' + '),
-                                  textAlign: TextAlign.center,
-                                ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                validateTime(time: item.time),
+                                textAlign: TextAlign.end,
                               ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Text(
-                                  validateTime(time: item.time),
-                                  textAlign: TextAlign.end,
-                                ),
-                              ),
-                            ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    if (item.notes.isNotEmpty)
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(item.notes),
                           ),
                         ],
-                      ),
-                      if (item.notes.isNotEmpty)
-                        Row(
-                          children: [
-                            Text(item.notes),
-                          ],
-                        )
-                    ],
-                  ),
+                      )
+                  ],
                 ),
               ),
             ],

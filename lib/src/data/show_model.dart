@@ -142,8 +142,8 @@ class ShowModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Widget getCueCard(int spot, double number) {
-    Cue cue = findCue(spot, number);
+  Widget getCueCard(int spotIndex, double number) {
+    Cue cue = findCue(spotIndex, number);
     Maneuver? maneuver = show.getManeuver(cue.maneuver);
     return Visibility(
         maintainState: true,
@@ -170,8 +170,10 @@ class ShowModel extends ChangeNotifier {
     debugPrint('Save as $outputFile');
   }
 
-  void openShow(String showFromFile, File file) async {
-    Map<String, dynamic> valueMap = await jsonDecode(showFromFile);
+  void openShow(String filePath) async {
+    File file = File(filePath);
+    String data = await file.readAsString();
+    Map<String, dynamic> valueMap = await jsonDecode(data);
     show = Show.fromJson(valueMap);
     show.maneuverList.toList();
     show.filename = file.path;
@@ -242,4 +244,11 @@ class ShowModel extends ChangeNotifier {
   }
 
   void updateTime() => show.info.date = DateTime.now();
+
+  void updateManeuverName(Maneuver maneuver, String newName) {
+    int m = show.maneuverList
+        .indexWhere((element) => element.name == maneuver.name);
+    show.maneuverList[m].name = newName;
+    notifyListeners();
+  }
 }
