@@ -13,7 +13,7 @@ import '../responsive/layouts/mobile_layout.dart';
 class SpotView extends StatelessWidget {
   const SpotView({super.key, required this.settings});
 
-  static const routeName = '/main';
+  static const routeName = '/';
   final uuid = const Uuid();
   final SettingsController settings;
 

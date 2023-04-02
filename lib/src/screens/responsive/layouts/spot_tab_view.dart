@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../../data/show_model.dart';
 import '../../../settings/settings_view.dart';
+import '../../preferences/app_settings_view.dart';
 import '../../printing/pdf_preview_screen.dart';
 
 class SpotTabView extends StatelessWidget {

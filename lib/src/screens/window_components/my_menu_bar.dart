@@ -136,8 +136,8 @@ class _MyMenuBarState extends State<MyMenuBar> {
               showModel.newShow();
               debugPrint('New Show selected');
             },
-            shortcut: const SingleActivator(LogicalKeyboardKey.keyN,
-                control: true, shift: true),
+            // shortcut: const SingleActivator(LogicalKeyboardKey.keyN,
+            //     control: true, shift: true),
           ),
           menuDivider,
           //Open File
@@ -332,8 +332,8 @@ class _MyMenuBarState extends State<MyMenuBar> {
                     _lastSelection = 'Light Theme';
                   });
                 },
-                // shortcut: const SingleActivator(LogicalKeyboardKey.keyR,
-                //     control: true),
+                shortcut: const SingleActivator(LogicalKeyboardKey.keyL,
+                    control: true),
               ),
               MenuEntry(
                 label: 'Dark Theme',
@@ -343,8 +343,8 @@ class _MyMenuBarState extends State<MyMenuBar> {
                     _lastSelection = 'Dark Theme';
                   });
                 },
-                // shortcut: const SingleActivator(LogicalKeyboardKey.keyG,
-                //     control: true),
+                shortcut: const SingleActivator(LogicalKeyboardKey.keyD,
+                    control: true),
               ),
               MenuEntry(
                 label: 'System Theme',
@@ -354,8 +354,8 @@ class _MyMenuBarState extends State<MyMenuBar> {
                     _lastSelection = 'Print Theme';
                   });
                 },
-                // shortcut: const SingleActivator(LogicalKeyboardKey.keyB,
-                //     control: true),
+                shortcut: const SingleActivator(LogicalKeyboardKey.keyT,
+                    control: true),
               ),
             ],
           ),

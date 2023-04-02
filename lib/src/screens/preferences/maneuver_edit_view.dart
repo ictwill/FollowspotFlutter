@@ -8,7 +8,7 @@ import '../../data/show_model.dart';
 class ManeuverEditView extends StatefulWidget {
   const ManeuverEditView({super.key});
 
-  static const routeName = '/maneuvers';
+  static const routeName = '/settings/maneuvers';
 
   @override
   State<ManeuverEditView> createState() => _ManeuverEditViewState();
@@ -22,12 +22,8 @@ class _ManeuverEditViewState extends State<ManeuverEditView> {
   @override
   Widget build(BuildContext context) {
     return Consumer<ShowModel>(
-      builder: (BuildContext context, model, Widget? child) => Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: const Text('Maneuvers'),
-        ),
-        body: SizedBox.expand(
+      builder: (BuildContext context, model, Widget? child) {
+        return SizedBox.expand(
             child: DataTable(
                 columns: const [
               DataColumn(
@@ -111,8 +107,8 @@ class _ManeuverEditViewState extends State<ManeuverEditView> {
                         ],
                       ),
                     )
-                    .toList())),
-      ),
+                    .toList()));
+      },
     );
   }
 }

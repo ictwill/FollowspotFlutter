@@ -13,7 +13,7 @@ class PdfPreviewScreen extends StatefulWidget {
   const PdfPreviewScreen(
       {super.key, required this.show, required this.controller});
 
-  static const routeName = '/print_preview';
+  static const routeName = '/printpreview';
   final SettingsController controller;
 
   final Show show;

@@ -52,13 +52,21 @@ class MyApp extends StatelessWidget {
               builder: (BuildContext context) {
                 switch (routeSettings.name) {
                   case SettingsView.routeName:
-                    return SettingsView(controller: settingsController);
+                    return SettingsView(
+                        settingsController: settingsController,
+                        tab: SettingPages.appSettings.index);
                   case ManeuverEditView.routeName:
-                    return const ManeuverEditView();
+                    return SettingsView(
+                        settingsController: settingsController,
+                        tab: SettingPages.maneuvers.index);
                   case ShowInfoEditView.routeName:
-                    return ShowInfoEditView();
+                    return SettingsView(
+                        settingsController: settingsController,
+                        tab: SettingPages.showinfo.index);
                   case SpotColorEditView.routeName:
-                    return SpotColorEditView();
+                    return SettingsView(
+                        settingsController: settingsController,
+                        tab: SettingPages.spotcolor.index);
                   case PdfPreviewScreen.routeName:
                     return PdfPreviewScreen(
                         show: Provider.of<ShowModel>(context).show,
