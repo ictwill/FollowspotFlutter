@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
@@ -32,19 +33,25 @@ class SettingsService {
 
   Future<void> savePageFormat(PdfPageFormat pageFormat) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('page_Format', jsonEncode(pageFormat));
+    await prefs.setDouble('page_width', pageFormat.width);
+    await prefs.setDouble('page_height', pageFormat.height);
+    await prefs.setDouble('margin_left', pageFormat.marginLeft);
+    await prefs.setDouble('margin_top', pageFormat.marginTop);
+    await prefs.setDouble('margin_right', pageFormat.marginRight);
+    await prefs.setDouble('margin_bottom', pageFormat.marginBottom);
   }
 
   Future<PdfPageFormat> loadPageFormat() async {
     final prefs = await SharedPreferences.getInstance();
-    final json = prefs.getString('page_format');
-    PdfPageFormat format;
 
-    if (json != null && json.isNotEmpty) {
-      format = jsonDecode(json);
-    } else {
-      format = PdfPageFormat.letter;
-    }
+    PdfPageFormat format = PdfPageFormat(
+      prefs.getDouble('page_width') ?? PdfPageFormat.letter.width,
+      prefs.getDouble('page_height') ?? PdfPageFormat.letter.height,
+      marginLeft: prefs.getDouble('margin_left') ?? 0.0,
+      marginTop: prefs.getDouble('margin_top') ?? 0.0,
+      marginRight: prefs.getDouble('margin_right') ?? 0.0,
+      marginBottom: prefs.getDouble('margin_bottom') ?? 0.0,
+    );
 
     return format;
   }

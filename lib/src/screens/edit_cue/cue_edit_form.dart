@@ -77,6 +77,8 @@ class CueEditForm extends StatelessWidget {
                   children: [
                     FormBuilderTextField(
                       name: 'number',
+                      validator: validateDouble,
+                      autovalidateMode: AutovalidateMode.always,
                       decoration: const InputDecoration(label: Text('Cue #')),
                       initialValue: deleteTrailing(cue.number),
                       autofocus: true,
