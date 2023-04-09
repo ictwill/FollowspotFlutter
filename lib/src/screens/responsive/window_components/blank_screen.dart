@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../data/show_model.dart';
+
+import '../../../models/show_model.dart';
 import '../../../settings/settings_controller.dart';
 
 class BlankScreen extends StatelessWidget {
@@ -37,6 +38,11 @@ class BlankScreen extends StatelessWidget {
                           child: Card(
                             elevation: 8,
                             child: ListTile(
+                              trailing: IconButton(
+                                  onPressed: () async {
+                                    await settings.removeRecentFile(e);
+                                  },
+                                  icon: Icon(Icons.close)),
                               hoverColor: Theme.of(context)
                                   .primaryColor
                                   .withOpacity(.2),

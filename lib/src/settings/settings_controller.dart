@@ -53,6 +53,15 @@ class SettingsController with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> removeRecentFile(String path) async {
+    List<String> files = _recentFiles.toList();
+    files.remove(path);
+    _recentFiles = files;
+
+    _settingsService.saveRecentFileList(_recentFiles);
+    notifyListeners();
+  }
+
   Future<void> changePageFormat(PdfPageFormat format) async {
     _pageFormat = format;
     notifyListeners();
