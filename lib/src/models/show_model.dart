@@ -125,7 +125,7 @@ class ShowModel extends ChangeNotifier {
         maintainState: true,
         maintainAnimation: true,
         maintainSize: true,
-        visible: cue.id == 'spacer' ? false : true,
+        visible: cue.id == 'blank' ? false : true,
         child: CueCard(
             item: cue,
             maneuver: maneuver,

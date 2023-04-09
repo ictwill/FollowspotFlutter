@@ -24,7 +24,7 @@ class Spot {
   Cue findCue(double number) {
     return cues.firstWhere(
       (element) => element.number == number,
-      orElse: () => Cue(id: 'spacer', number: number, spot: this.number),
+      orElse: () => Cue(id: 'blank', number: number, spot: this.number),
     );
   }
 
