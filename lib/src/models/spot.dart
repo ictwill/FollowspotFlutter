@@ -24,7 +24,18 @@ class Spot {
   Cue findCue(double number) {
     return cues.firstWhere(
       (element) => element.number == number,
-      orElse: () => Cue(id: 'blank', spot: this.number),
+      orElse: () => Cue(id: 'spacer', number: number, spot: this.number),
     );
   }
+
+  void addCue(Cue newCue) {
+    cues.add(newCue);
+    sortCues();
+  }
+
+  void deleteCue(Cue deletedCue) {
+    cues.remove(deletedCue);
+  }
+
+  void sortCues() => cues.sort((a, b) => a.number.compareTo(b.number));
 }

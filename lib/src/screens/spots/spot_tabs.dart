@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../data/show_model.dart';
 import '../../models/cue.dart';
+import '../../models/show_model.dart';
 import '../navigation.dart';
 
 class SpotTabs extends StatelessWidget {

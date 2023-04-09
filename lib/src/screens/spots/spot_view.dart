@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../data/show_model.dart';
+import '../../models/show_model.dart';
 import '../../settings/settings_controller.dart';
 import '../responsive/layouts/desktop_layout.dart';
 import '../responsive/layouts/mobile_layout.dart';

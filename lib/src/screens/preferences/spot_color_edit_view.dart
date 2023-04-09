@@ -3,7 +3,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/gel_colors.dart';
-import '../../data/show_model.dart';
+import '../../models/show_model.dart';
 
 class SpotColorEditView extends StatelessWidget {
   static const String routeName = '/settings/spotcolor';

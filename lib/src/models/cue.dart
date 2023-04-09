@@ -10,7 +10,7 @@ class Cue {
   String target;
   String size;
   int? intensity;
-  List<String> frames;
+  List<int> frames;
   int? time;
   String notes;
   int spot;

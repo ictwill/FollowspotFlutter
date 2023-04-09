@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:followspot_application_1/src/screens/navigation.dart';
 import 'package:provider/provider.dart';
 
-import '../../data/show_model.dart';
+import '../../models/show_model.dart';
 
 class SpotCues extends StatelessWidget {
   const SpotCues({super.key});

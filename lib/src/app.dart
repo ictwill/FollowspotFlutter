@@ -3,7 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
-import 'data/show_model.dart';
+import 'models/show_model.dart';
 import 'screens/preferences/spot_color_edit_view.dart';
 import 'screens/preferences/maneuver_edit_view.dart';
 import 'screens/preferences/show_info_edit_view.dart';

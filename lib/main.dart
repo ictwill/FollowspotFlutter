@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'src/app.dart';
-import 'src/data/show_model.dart';
+import 'src/models/show_model.dart';
 import 'src/settings/settings_controller.dart';
 import 'src/settings/settings_service.dart';
 import 'package:window_size/window_size.dart';

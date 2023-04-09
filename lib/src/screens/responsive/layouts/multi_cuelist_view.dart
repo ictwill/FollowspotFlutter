@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:followspot_application_1/src/data/show_model.dart';
 import 'package:provider/provider.dart';
 
+import '../../../models/show_model.dart';
 import '../../navigation.dart';
 
 class MultiCueListView extends StatelessWidget {

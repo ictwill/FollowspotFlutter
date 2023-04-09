@@ -5,9 +5,9 @@ import 'package:followspot_application_1/src/screens/navigation.dart';
 import 'package:followspot_application_1/src/settings/settings_controller.dart';
 import 'package:provider/provider.dart';
 
-import '../../../data/show_model.dart';
+import '../../../models/show_model.dart';
 import '../../../settings/settings_view.dart';
-import '../../preferences/app_settings_view.dart';
+
 import '../../printing/pdf_preview_screen.dart';
 
 class SpotTabView extends StatelessWidget {

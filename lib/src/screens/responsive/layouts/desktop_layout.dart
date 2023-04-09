@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../data/show_model.dart';
+import '../../../models/show_model.dart';
 import '../../window_components/my_menu_bar.dart';
 import '../responsive_layout.dart';
 import '../window_components/blank_screen.dart';

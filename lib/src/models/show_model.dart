@@ -7,12 +7,12 @@ import 'package:followspot_application_1/src/settings/settings_controller.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
-import '../models/cue.dart';
-import '../models/maneuver.dart';
-import '../models/show.dart';
-import '../models/spot.dart';
+import 'cue.dart';
+import 'maneuver.dart';
+import 'show.dart';
+import 'spot.dart';
 import '../screens/spots/cue_card.dart';
-import 'dummy_show.dart';
+import '../data/dummy_show.dart';
 
 class ShowModel extends ChangeNotifier {
   Show show = Show(info: ShowInfo(date: DateTime(0)));
@@ -31,63 +31,39 @@ class ShowModel extends ChangeNotifier {
     settings = settingsController;
   }
 
-  Cue findCue(int spotIndex, double number) {
-    if (show.spotList[spotIndex].cues.isNotEmpty) {
-      return show.spotList[spotIndex].cues.firstWhere(
-        (element) => element.number == number,
-        orElse: () {
-          return Cue(
-            id: 'spacer',
-            number: number,
-            spot: spotIndex,
-          );
-        },
-      );
+  Cue findCue(int spotIndex, double number) =>
+      show.spotList[spotIndex].findCue(number);
+
+  void updateCue(Cue oldCue, Cue newCue) {
+    int spotIndex;
+    if (oldCue.spot != newCue.spot) {
+      spotIndex = getSpotIndex(newCue.spot);
     } else {
-      return Cue(
-        id: 'spacer',
-        number: number,
-        spot: spotIndex,
-      );
+      spotIndex = getSpotIndex(oldCue.spot);
     }
-  }
-
-  void selectCue(Cue cue) {
-    currentCue = cue;
-  }
-
-  void updateCue(int spot, Cue oldCue, Cue newCue) {
-    int index = getSpotIndex(oldCue.spot);
     deleteCue(oldCue);
-    if (oldCue.spot != newCue.spot) index = getSpotIndex(newCue.spot);
-    addCue(index, newCue);
-    refreshSpot(index);
+    addCue(spotIndex, newCue);
+    refreshNumbers();
     notifyListeners();
   }
 
-  void refreshSpot(int index) {
-    // show.spotList[index].cues.sort((a, b) => a.number.compareTo(b.number));
-    usedNumbers = show.cueNumbers();
-    notifyListeners();
-  }
+  void refreshNumbers() => usedNumbers = show.cueNumbers();
 
-  void addCue(int index, Cue newCue) {
-    show.spotList[index].cues.add(newCue);
-  }
+  void addCue(int spotIndex, Cue newCue) =>
+      show.spotList[spotIndex].addCue(newCue);
 
   void deleteCue(Cue oldCue) {
     int index = getSpotIndex(oldCue.spot);
-    debugPrint(show.spotList[index].cues.length.toString());
-    show.spotList[index].cues.remove(oldCue);
-    debugPrint(show.spotList[index].cues.length.toString());
-    refreshSpot(index);
+    show.spotList[index].deleteCue(oldCue);
+    refreshNumbers();
+    notifyListeners();
   }
 
-  int getSpotIndex(int number) =>
-      show.spotList.indexWhere((spot) => spot.number == number);
+  int getSpotIndex(int spotNumber) =>
+      show.spotList.indexWhere((spot) => spot.number == spotNumber);
 
-  List<String> getFrameList(int spot) =>
-      show.spotList[getSpotIndex(spot)].frames;
+  Map<int, String> getFrameList(int spot) =>
+      show.spotList[getSpotIndex(spot)].frames.asMap();
 
   void closeShow() {
     show = Show(info: ShowInfo(date: DateTime.now()), maneuverList: []);
@@ -150,7 +126,10 @@ class ShowModel extends ChangeNotifier {
         maintainAnimation: true,
         maintainSize: true,
         visible: cue.id == 'spacer' ? false : true,
-        child: CueCard(item: cue, maneuver: maneuver));
+        child: CueCard(
+            item: cue,
+            maneuver: maneuver,
+            frameString: getCueFrames(spotIndex, cue.frames)));
   }
 
   Future<void> saveAs() async {
@@ -178,13 +157,17 @@ class ShowModel extends ChangeNotifier {
     show.maneuverList.toList();
     show.filename = file.path;
 
+    for (var spot in show.spotList) {
+      spot.sortCues();
+    }
+
     usedNumbers = show.cueNumbers();
     List<Maneuver> allManeuvers = [];
 
-    for (var e in show.spotList) {
-      for (var e in e.cues) {
-        if (e.maneuver != null) {
-          show.getManeuver(e.maneuver!);
+    for (var spot in show.spotList) {
+      for (var cue in spot.cues) {
+        if (cue.maneuver != null) {
+          show.getManeuver(cue.maneuver!);
         }
       }
     }
@@ -250,5 +233,15 @@ class ShowModel extends ChangeNotifier {
         .indexWhere((element) => element.name == maneuver.name);
     show.maneuverList[m].name = newName;
     notifyListeners();
+  }
+
+  String getCueFrames(int spotIndex, List<int> frames) {
+    String string = frames.map((frame) {
+      final spotFrame = show.spotList[spotIndex].frames[frame];
+      final String cueFrame = 'F${frame + 1}: $spotFrame';
+      return cueFrame;
+    }).join(' + ');
+
+    return string;
   }
 }

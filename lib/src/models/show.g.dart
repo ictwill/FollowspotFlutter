@@ -7,7 +7,7 @@ part of 'show.dart';
 // **************************************************************************
 
 Show _$ShowFromJson(Map<String, dynamic> json) => Show(
-      filename: json['filename'] as String? ?? '',
+      filename: json['filename'] as String?,
       id: json['id'] as int? ?? -1,
       info: ShowInfo.fromJson(json['info'] as Map<String, dynamic>),
       spotList: (json['spotList'] as List<dynamic>?)
@@ -30,10 +30,10 @@ Map<String, dynamic> _$ShowToJson(Show instance) => <String, dynamic>{
 
 ShowInfo _$ShowInfoFromJson(Map<String, dynamic> json) => ShowInfo(
       id: json['id'] as int? ?? -1,
-      title: json['title'] as String? ?? '-',
-      location: json['location'] as String? ?? '-',
-      ld: json['ld'] as String? ?? '-',
-      ald: json['ald'] as String? ?? '-',
+      title: json['title'] as String? ?? '',
+      location: json['location'] as String? ?? '',
+      ld: json['ld'] as String? ?? '',
+      ald: json['ald'] as String? ?? '',
       date: DateTime.parse(json['date'] as String),
     );
 

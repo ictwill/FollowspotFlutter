@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
 
-import '../../data/show_model.dart';
+import '../../models/show_model.dart';
 import '../../models/show.dart';
 
 class ShowInfoEditView extends StatelessWidget {

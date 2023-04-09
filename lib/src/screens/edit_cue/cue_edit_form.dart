@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../data/gel_colors.dart';
 import '../../data/number_helpers.dart';
-import '../../data/show_model.dart';
+import '../../models/show_model.dart';
 import '../../models/cue.dart';
 
 class CueEditForm extends StatelessWidget {
@@ -17,20 +17,22 @@ class CueEditForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<ShowModel>(
-      builder: (context, showModel, child) {
+      builder: (context, model, child) {
         Cue createCue() {
+          List<int> frames = _formKey.currentState!.value['frames'];
+          if (frames.length > 1) frames.sort();
           return Cue(
               id: cue.id,
-              spot: cue.spot,
+              spot: _formKey.currentState!.value['spot'],
               number: double.tryParse(_formKey.currentState!.value['number']) ??
                   0.0,
-              maneuver: showModel.currentCue.maneuver,
+              maneuver: cue.maneuver,
               target: _formKey.currentState!.value['target'],
               time: int.tryParse(_formKey.currentState!.value['time']),
               size: _formKey.currentState!.value['size'],
               intensity:
                   int.tryParse(_formKey.currentState!.value['intensity']),
-              frames: _formKey.currentState!.value['frames'],
+              frames: frames,
               notes: _formKey.currentState!.value['notes']);
         }
 
@@ -41,7 +43,7 @@ class CueEditForm extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.saveAndValidate()) {
-                    showModel.updateCue(cue.spot, cue, createCue());
+                    model.updateCue(cue, createCue());
                     Navigator.pop(context);
                   }
                 },
@@ -51,7 +53,7 @@ class CueEditForm extends StatelessWidget {
                 onSelected: (item) {
                   switch (item) {
                     case 0:
-                      showModel.deleteCue(cue);
+                      model.deleteCue(cue);
                       debugPrint('DELETED Cue id ${cue.id}');
                       Navigator.pop(context);
                   }
@@ -75,6 +77,16 @@ class CueEditForm extends StatelessWidget {
                       maxCrossAxisExtent: 340,
                       childAspectRatio: 5),
                   children: [
+                    FormBuilderDropdown(
+                      decoration: const InputDecoration(labelText: 'Spot'),
+                      name: 'spot',
+                      items: model.show.spotList
+                          .map((e) => DropdownMenuItem(
+                              value: e.number,
+                              child: Text(e.number.toString())))
+                          .toList(),
+                      initialValue: cue.spot,
+                    ),
                     FormBuilderTextField(
                       name: 'number',
                       validator: validateDouble,
@@ -86,15 +98,15 @@ class CueEditForm extends StatelessWidget {
                     Autocomplete<String>(
                       key: const Key('maneuvers'),
                       initialValue: TextEditingValue(text: cue.maneuver ?? ''),
-                      optionsBuilder: (textEditingValue) => showModel
+                      optionsBuilder: (textEditingValue) => model
                           .show.maneuverList
                           .map((e) => e.name)
                           .toList()
                           .where((element) => element
                               .toLowerCase()
                               .contains(textEditingValue.text.toLowerCase())),
-                      onSelected: (option) => showModel.currentCue.maneuver =
-                          showModel.show.getManeuver(option)?.name,
+                      onSelected: (option) =>
+                          cue.maneuver = model.show.getManeuver(option)?.name,
                       fieldViewBuilder: (context, textEditingController,
                               focusNode, onFieldSubmitted) =>
                           TextField(
@@ -103,8 +115,8 @@ class CueEditForm extends StatelessWidget {
                             const InputDecoration(label: Text('Maneuvers')),
                         controller: textEditingController,
                         focusNode: focusNode,
-                        onSubmitted: (value) => showModel.currentCue.maneuver =
-                            showModel.show.getManeuver(value)?.name,
+                        onSubmitted: (value) =>
+                            cue.maneuver = model.show.getManeuver(value)?.name,
                       ),
                     ),
                     FormBuilderTextField(
@@ -141,19 +153,19 @@ class CueEditForm extends StatelessWidget {
                   wrapSpacing: 8,
                   decoration:
                       const InputDecoration(label: Text('Color Frames')),
-                  options: showModel.show.spotList
-                      .singleWhere((element) => element.number == cue.spot)
-                      .frames
-                      .map((e) => FormBuilderFieldOption(
-                            value: e,
+                  options: model
+                      .getFrameList(cue.spot)
+                      .entries
+                      .map((entry) => FormBuilderFieldOption(
+                            value: entry.key,
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
                                   Icons.circle,
-                                  color: getGelHex(e),
+                                  color: getGelHex(entry.value),
                                 ),
-                                Text(e)
+                                Text(entry.value)
                               ],
                             ),
                           ))

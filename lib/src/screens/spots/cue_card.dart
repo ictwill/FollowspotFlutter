@@ -6,10 +6,13 @@ import '../../models/maneuver.dart';
 import '../edit_cue/cue_edit_form.dart';
 
 class CueCard extends StatelessWidget {
+  final String frameString;
+
   const CueCard({
     Key? key,
     required this.item,
     required this.maneuver,
+    required this.frameString,
   }) : super(key: key);
 
   final Cue item;
@@ -100,7 +103,7 @@ class CueCard extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                item.frames.join(' + '),
+                                frameString,
                                 textAlign: TextAlign.center,
                               ),
                             ),

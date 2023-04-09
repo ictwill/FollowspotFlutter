@@ -3,7 +3,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import 'package:provider/provider.dart';
 
-import '../../data/show_model.dart';
+import '../../models/show_model.dart';
 
 class ManeuverEditView extends StatefulWidget {
   const ManeuverEditView({super.key});

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:followspot_application_1/src/data/show_model.dart';
 import 'package:followspot_application_1/src/screens/responsive/layouts/spot_tab_view.dart';
 import 'package:followspot_application_1/src/settings/settings_controller.dart';
 import 'package:provider/provider.dart';
 
+import '../../../models/show_model.dart';
 import '../../../settings/settings_view.dart';
-import '../../preferences/app_settings_view.dart';
 import '../../printing/pdf_preview_screen.dart';
 
 class MobileLayout extends StatelessWidget {
