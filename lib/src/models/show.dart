@@ -65,6 +65,16 @@ class Show {
   void deleteManeuver(Maneuver maneuver) {
     maneuverList.remove(maneuver);
   }
+
+  String getCueFrames(int spotIndex, List<int> frames) {
+    String string = frames.map((frame) {
+      final spotFrame = spotList[spotIndex].frames[frame];
+      final String cueFrame = 'F${frame + 1}: $spotFrame';
+      return cueFrame;
+    }).join(' + ');
+
+    return string;
+  }
 }
 
 enum Info {

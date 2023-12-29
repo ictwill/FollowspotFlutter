@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:followspot_application_1/src/screens/spots/cue_card_single_line.dart';
+import 'package:followspot_application_1/src/settings/cue_formats.dart';
 import 'package:followspot_application_1/src/settings/settings_controller.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
@@ -11,7 +13,7 @@ import 'cue.dart';
 import 'maneuver.dart';
 import 'show.dart';
 import 'spot.dart';
-import '../screens/spots/cue_card.dart';
+import '../screens/spots/cue_card_multi_line.dart';
 import '../data/dummy_show.dart';
 
 class ShowModel extends ChangeNotifier {
@@ -121,15 +123,25 @@ class ShowModel extends ChangeNotifier {
   Widget getCueCard(int spotIndex, double number) {
     Cue cue = findCue(spotIndex, number);
     Maneuver? maneuver = show.getManeuver(cue.maneuver);
+    String cueFrames = show.getCueFrames(spotIndex, cue.frames);
+
     return Visibility(
         maintainState: true,
         maintainAnimation: true,
         maintainSize: true,
         visible: cue.id == 'blank' ? false : true,
-        child: CueCard(
-            item: cue,
-            maneuver: maneuver,
-            frameString: getCueFrames(spotIndex, cue.frames)));
+        child: getCardFormat(cue, maneuver, cueFrames));
+  }
+
+  Widget getCardFormat(Cue cue, Maneuver? maneuver, String cueFrames) {
+    switch (settings.cueFormat) {
+      case CueFormat.singleLine:
+        return CueCardSingleLine(
+            item: cue, maneuver: maneuver, frameString: cueFrames);
+      case CueFormat.multiLine:
+        return CueCardMultiLine(
+            item: cue, maneuver: maneuver, frameString: cueFrames);
+    }
   }
 
   Future<void> saveAs() async {
@@ -233,15 +245,5 @@ class ShowModel extends ChangeNotifier {
         .indexWhere((element) => element.name == maneuver.name);
     show.maneuverList[m].name = newName;
     notifyListeners();
-  }
-
-  String getCueFrames(int spotIndex, List<int> frames) {
-    String string = frames.map((frame) {
-      final spotFrame = show.spotList[spotIndex].frames[frame];
-      final String cueFrame = 'F${frame + 1}: $spotFrame';
-      return cueFrame;
-    }).join(' + ');
-
-    return string;
   }
 }

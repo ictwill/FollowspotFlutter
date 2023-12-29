@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:followspot_application_1/src/data/number_helpers.dart';
+import 'package:followspot_application_1/src/settings/cue_formats.dart';
 import 'package:pdf/pdf.dart';
 
 import '../printing/pdf_preview_screen.dart';
@@ -73,6 +74,25 @@ class _AppSettingsViewState extends State<AppSettingsView> {
                 value: ThemeMode.dark,
                 child: Text('Dark Theme'),
               )
+            ],
+          ),
+        ],
+      ),
+      Row(
+        children: [
+          const Text('Cue Format:  '),
+          DropdownButton<CueFormat>(
+            value: widget.controller.cueFormat,
+            onChanged: widget.controller.changeCueFormat,
+            items: const [
+              DropdownMenuItem(
+                value: CueFormat.singleLine,
+                child: Text('Single Line'),
+              ),
+              DropdownMenuItem(
+                value: CueFormat.multiLine,
+                child: Text('Two Line'),
+              ),
             ],
           ),
         ],

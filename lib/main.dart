@@ -20,7 +20,7 @@ void main() async {
 
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     WidgetsFlutterBinding.ensureInitialized();
-    setWindowTitle('Follow');
+    setWindowTitle('Followspot Go');
     setWindowMinSize(const Size(400, 400));
   }
 

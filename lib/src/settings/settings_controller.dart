@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:followspot_application_1/src/settings/cue_formats.dart';
 import 'package:pdf/pdf.dart';
 
 import '../screens/printing/pdf_preview_screen.dart';
@@ -24,11 +25,14 @@ class SettingsController with ChangeNotifier {
   late PdfPageFormat _pageFormat;
   PdfPageFormat get pageFormat => _pageFormat;
 
+  late CueFormat _cueFormat;
+  CueFormat get cueFormat => _cueFormat;
+
   Future<void> loadSettings() async {
     _themeMode = await _settingsService.loadThemeMode();
     _recentFiles = await _settingsService.loadRecentFileList();
     _pageFormat = await _settingsService.loadPageFormat();
-
+    _cueFormat = await _settingsService.loadCueformat();
     notifyListeners();
   }
 
@@ -39,7 +43,6 @@ class SettingsController with ChangeNotifier {
     } else {
       return;
     }
-
     notifyListeners();
   }
 
@@ -64,6 +67,15 @@ class SettingsController with ChangeNotifier {
 
   Future<void> changePageFormat(PdfPageFormat format) async {
     _pageFormat = format;
+    notifyListeners();
+  }
+
+  Future<void> changeCueFormat(CueFormat? cueFormat) async {
+    if (cueFormat != null) {
+      _cueFormat = cueFormat;
+    } else {
+      return;
+    }
     notifyListeners();
   }
 

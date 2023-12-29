@@ -1,0 +1,1 @@
+enum CueFormat { singleLine, multiLine }

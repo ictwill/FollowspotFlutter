@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:followspot_application_1/src/settings/cue_formats.dart';
 import 'package:pdf/pdf.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -62,5 +63,25 @@ class SettingsService {
     final prefs = await SharedPreferences.getInstance();
     final list = prefs.getStringList('files');
     return list ?? List.empty();
+  }
+
+  Future<void> saveCueformat(CueFormat cueFormat) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('cueformat', cueFormat.toString());
+    debugPrint(cueFormat.toString());
+  }
+
+  Future<CueFormat> loadCueformat() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? value = prefs.getString('cueformat');
+
+    switch (value) {
+      case 'CueFormats.singleLine':
+        return CueFormat.singleLine;
+      case 'CueFormats.twoLine':
+        return CueFormat.multiLine;
+      default:
+        return CueFormat.multiLine;
+    }
   }
 }
