@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:pdf/widgets.dart';
 
 import 'cue.dart';
 
@@ -38,4 +39,18 @@ class Spot {
   }
 
   void sortCues() => cues.sort((a, b) => a.number.compareTo(b.number));
+
+  List<Widget> getColorFrames() {
+    Map<int, String> frameMap = frames.asMap();
+    List<Widget> textWidgets = [];
+
+    for (int index = 0; index < frameMap.length; index++) {
+      String frameText = '${index + 1}. ${frameMap[index]}';
+
+      textWidgets.add(Row(children: [
+        Text(frameText, textScaleFactor: 0.7),
+      ]));
+    }
+    return frames.map((e) => Text(' $e ', textScaleFactor: 0.7)).toList();
+  }
 }

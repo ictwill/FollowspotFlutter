@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 Color getGelHex(String string) {
   late Map<String, String>? brand;
 
-  String color = 'FF000000';
+  String color = 'FF777777';
 
   if (string.isNotEmpty) {
     switch (string[0].toUpperCase()) {
@@ -23,13 +23,13 @@ Color getGelHex(String string) {
         break;
       default:
         brand = null;
-        color = 'FF000000';
+        color = 'FF777777';
         break;
     }
     if (brand != null) {
-      color = 'FF${brand[string.substring(1)]}';
+      color = 'FF${brand[int.parse(string.substring(1)).toString()]}';
     } else if (color.isEmpty || color == 'FF') {
-      color = 'FF000000';
+      color = 'FF777777';
     }
   }
 

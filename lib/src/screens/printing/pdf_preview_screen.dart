@@ -1,4 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:open_file/open_file.dart';
+
+import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 
 import '../../models/show.dart';
@@ -68,7 +75,7 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
         ),
       ),
       body: PdfPreview(
-        pdfFileName: '${widget.show.filename}.pdf',
+        pdfFileName: getPdfName,
         initialPageFormat: widget.controller.pageFormat,
         onPageFormatChanged: (format) {
           widget.controller.changePageFormat(format);
@@ -79,6 +86,16 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
         shouldRepaint: shouldRedraw,
         useActions: true,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.save),
+            onPressed: () {
+              _savePDFFile(
+                  context,
+                  (format) => makePdf(format, widget.show, selectedSpotindex),
+                  widget.controller.pageFormat,
+                  getPdfName);
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
@@ -97,4 +114,60 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
       ),
     );
   }
+
+  String get getPdfName {
+    DateTime date = widget.show.info.date;
+    DateFormat formatter = DateFormat('yyyy-MM-dd HHmm');
+    String formattedDate = formatter.format(date);
+    return '${widget.show.info.title} - $formattedDate.pdf';
+  }
 }
+
+Future<void> _savePDFFile(
+  BuildContext context,
+  LayoutCallback build,
+  PdfPageFormat pageFormat,
+  String filename,
+) async {
+  final bytes = await build(pageFormat);
+
+  final appDocDir = await getApplicationDocumentsDirectory();
+  final appDocPath = appDocDir.path;
+  final file = File('$appDocPath\\$filename');
+  print('Save as file ${file.path} ...');
+  await file.writeAsBytes(bytes);
+  await OpenFile.open(file.path);
+}
+
+// Printing.layoutPdf(
+//               // [onLayout] will be called multiple times
+//               // when the user changes the printer or printer settings
+//               onLayout: (PdfPageFormat format) {
+//                 // Any valid Pdf document can be returned here as a list of int
+//                 return buildPdf(format);
+//               },
+//             );
+
+//               /// This method takes a page format and generates the Pdf file data
+//   Future<Uint8List> buildPdf(PdfPageFormat format) async {
+//     // Create the Pdf document
+//     final pw.Document doc = pw.Document();
+
+//     // Add one page with centered text "Hello World"
+//     doc.addPage(
+//       pw.Page(
+//         pageFormat: format,
+//         build: (pw.Context context) {
+//           return pw.ConstrainedBox(
+//             constraints: pw.BoxConstraints.expand(),
+//             child: pw.FittedBox(
+//               child: pw.Text('Hello World'),
+//             ),
+//           );
+//         },
+//       ),
+//     );
+
+//     // Build and return the final Pdf file data
+//     return await doc.save();
+//   }

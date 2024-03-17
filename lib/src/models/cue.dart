@@ -38,5 +38,5 @@ class Cue {
 
   Map<String, dynamic> toJson() => _$CueToJson(this);
 
-  String getFrames() => frames.join(' + ');
+  String getFrames() => frames.map((e) => e + 1).join(' + ');
 }

@@ -1,4 +1,9 @@
+// import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart' as mt;
+import 'package:flutter_to_pdf/args/color.dart';
+import 'package:followspot_application_1/src/data/gel_colors.dart';
+import 'package:followspot_application_1/src/models/spot.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 import 'package:printing/printing.dart';
@@ -10,10 +15,13 @@ import '../../models/show.dart';
 
 Future<Uint8List> makePdf(
     PdfPageFormat pageFormat, Show show, int indexSpot) async {
-  final pageTheme = await myPageTheme(pageFormat);
+  PageTheme pageTheme = await myPageTheme(pageFormat);
 
   final numbers = show.cueNumbers();
-  final pdf = Document();
+  final pdf = Document(
+    title: show.info.title,
+    author: show.info.ld,
+  );
   pdf.addPage(
     MultiPage(
       pageTheme: pageTheme,
@@ -50,12 +58,6 @@ Future<Uint8List> makePdf(
       },
     ),
   );
-
-  // // On Flutter, use the [path_provider](https://pub.dev/packages/path_provider) library:
-  // final output = await getTemporaryDirectory();
-  // final file = File("${output.path}/example.pdf");
-  // await file.writeAsBytes(await pdf.save());
-
   return await pdf.save();
 }
 
@@ -102,12 +104,31 @@ Column spotHeader(Show show, int i) {
   return Column(children: [
     Text('Spot ${show.spotList[i].number}', textAlign: TextAlign.center),
     Row(
-      children: show.spotList[i].frames
-          .map((e) => Text(' $e ', textScaleFactor: 0.7))
-          .toList(),
+      children: spotColor(show.spotList[i]),
     ),
   ]);
 }
+
+List<Widget> spotColor(Spot spot) {
+  List<Row> rowWidgets = [];
+  for (int index = 0; index < spot.frames.length; index++) {
+    rowWidgets.add(Row(children: [
+      Text('${index + 1}: ', textScaleFactor: 0.7),
+      Text(spot.frames[index], textScaleFactor: 0.7),
+      Icon(
+        const IconData(0xef4a),
+        size: 10,
+        color: getGelHex(spot.frames[index]).toPdfColor(),
+      ),
+      SizedBox(width: 4)
+    ]));
+  }
+
+  return rowWidgets;
+}
+
+BoxDecoration boxDecoration = BoxDecoration(
+    border: Border.all(width: .01), borderRadius: BorderRadius.circular(2));
 
 ///Card Printable Widget for a cue in a column
 class PrintCompactCard extends StatelessWidget {
@@ -115,50 +136,60 @@ class PrintCompactCard extends StatelessWidget {
   final Maneuver? maneuver;
 
   PrintCompactCard(this.cue, this.maneuver);
+
   @override
   Widget build(Context context) {
     if (cue.id == 'blank') {
       return Spacer();
     } else {
       return Container(
-        foregroundDecoration: BoxDecoration(border: Border.all(width: .1)),
+        foregroundDecoration: boxDecoration,
         child: Row(children: [
           Container(
             decoration: BoxDecoration(
               color: getPDFColor(maneuver?.color),
             ),
-            height: 40,
+            height: 46,
             width: 32,
             alignment: Alignment.center,
             child:
                 Text(deleteTrailing(cue.number), textAlign: TextAlign.center),
           ),
           Expanded(
-              child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-            child: Table(children: [
-              TableRow(children: [
-                Row(mainAxisSize: MainAxisSize.min, children: [
-                  // if (maneuver?.iconCodePoint != null)
-                  //   Icon(IconData(maneuver!.iconCodePoint!),
-                  //       color: PdfColor.fromInt(maneuver?.color ?? 0xFF77777),
-                  //       size: 12),
-                  Text(maneuver?.name ?? '-'),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                Table(columnWidths: <int, TableColumnWidth>{
+                  0: const FlexColumnWidth(1.0),
+                  1: const FlexColumnWidth(2.0),
+                  2: const FlexColumnWidth(1.0),
+                }, children: [
+                  TableRow(children: [
+                    // Text(maneuver.iconData.codePoint.toString()),
+                    paddedText(maneuver?.name ?? '-', TextAlign.start),
+                    paddedText(cue.target, TextAlign.center),
+                    paddedText(cue.size, TextAlign.end),
+                  ]),
+                  TableRow(
+                      decoration: const BoxDecoration(color: PdfColors.grey100),
+                      children: [
+                        paddedText(validateIntensity(intensity: cue.intensity),
+                            TextAlign.start),
+                        paddedText(cue.getFrames(), TextAlign.center),
+                        paddedText(validateTime(time: cue.time), TextAlign.end),
+                      ]),
                 ]),
-                Text(cue.target, textAlign: TextAlign.center),
-                Text(cue.size, textAlign: TextAlign.right),
-              ]),
-              TableRow(children: [
-                Text('${validateIntensity(intensity: cue.intensity)} %'),
-                Text(cue.getFrames(), textAlign: TextAlign.center),
-                Text('${validateTime(time: cue.time)} ct',
-                    textAlign: TextAlign.right),
-              ])
-            ]),
-          ))
+                paddedText(cue.notes, TextAlign.start)
+              ]))
         ]),
       );
     }
+  }
+
+  Padding paddedText(String text, TextAlign textAlign) {
+    return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 4.0),
+        child: Text(text, textAlign: textAlign));
   }
 }
 
@@ -175,7 +206,7 @@ class PrintWideCard extends StatelessWidget {
       return SizedBox(height: 24);
     } else {
       return Container(
-        foregroundDecoration: BoxDecoration(border: Border.all(width: .1)),
+        foregroundDecoration: boxDecoration,
         child: Row(children: [
           Container(
             decoration: BoxDecoration(
@@ -190,7 +221,14 @@ class PrintWideCard extends StatelessWidget {
           Expanded(
               child: Container(
             padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-            child: Table(children: [
+            child: Table(columnWidths: <int, TableColumnWidth>{
+              0: const FlexColumnWidth(2.0),
+              1: const FlexColumnWidth(2.0),
+              2: const FlexColumnWidth(2.0),
+              3: const FlexColumnWidth(1.0),
+              4: const FlexColumnWidth(1.0),
+              5: const FlexColumnWidth(1.0),
+            }, children: [
               TableRow(children: [
                 Row(mainAxisSize: MainAxisSize.min, children: [
                   // Icon(const IconData(0xe530),
@@ -198,12 +236,11 @@ class PrintWideCard extends StatelessWidget {
                   //     size: 12),
                   Text(maneuver?.name ?? '-'),
                 ]),
-                Text(cue.target, textAlign: TextAlign.center),
-                Text(cue.size, textAlign: TextAlign.right),
-                Text('${validateIntensity(intensity: cue.intensity)} %'),
-                Text(cue.getFrames(), textAlign: TextAlign.center),
-                Text('${validateTime(time: cue.time)} ct',
-                    textAlign: TextAlign.right),
+                Text(cue.target),
+                Text(cue.size),
+                Text(validateIntensity(intensity: cue.intensity)),
+                Text(cue.getFrames()),
+                Text(validateTime(time: cue.time)),
               ])
             ]),
           ))

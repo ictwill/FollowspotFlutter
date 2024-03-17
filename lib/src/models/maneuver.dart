@@ -12,9 +12,12 @@ class Maneuver {
   bool header;
   String? fontFamily;
 
+  IconData iconData;
+
   Maneuver({
     required this.name,
     this.color = 0xFF777777,
+    this.iconData = Icons.square,
     this.iconName = '',
     this.iconCodePoint,
     this.header = false,
