@@ -75,6 +75,11 @@ class Show {
 
     return string;
   }
+
+  void toggleManeuverHeader(Maneuver maneuver, bool newvalue) {
+    int i = maneuverList.indexOf(maneuver);
+    maneuverList.elementAt(i).header = newvalue;
+  }
 }
 
 enum Info {

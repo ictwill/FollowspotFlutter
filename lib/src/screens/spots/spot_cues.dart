@@ -53,7 +53,9 @@ class SpotCues extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         for (int i = 0; i < model.show.spotList.length; i++)
-                          Expanded(child: model.getCueCard(i, number))
+                          Expanded(
+                              child: Column(
+                                  children: model.getCueCards(i, number)))
                       ],
                     );
                   },

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:followspot_application_1/src/screens/spots/header_card.dart';
 import 'package:followspot_application_1/src/screens/spots/cue_card_single_line.dart';
 import 'package:followspot_application_1/src/settings/cue_formats.dart';
 import 'package:followspot_application_1/src/settings/settings_controller.dart';
@@ -33,8 +34,8 @@ class ShowModel extends ChangeNotifier {
     settings = settingsController;
   }
 
-  Cue findCue(int spotIndex, double number) =>
-      show.spotList[spotIndex].findCue(number);
+  Iterable<Cue> findCues(int spotIndex, double number) =>
+      show.spotList[spotIndex].findCues(number);
 
   void updateCue(Cue oldCue, Cue newCue) {
     int spotIndex;
@@ -121,20 +122,26 @@ class ShowModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Widget getCueCard(int spotIndex, double number) {
-    Cue cue = findCue(spotIndex, number);
-    Maneuver? maneuver = show.getManeuver(cue.maneuver);
-    String cueFrames = show.getCueFrames(spotIndex, cue.frames);
-
-    return Visibility(
-        maintainState: true,
-        maintainAnimation: true,
-        maintainSize: true,
-        visible: cue.id == 'blank' ? false : true,
-        child: getCardFormat(cue, maneuver, cueFrames));
+  List<Widget> getCueCards(int spotIndex, double number) {
+    Iterable<Cue> cues = findCues(spotIndex, number);
+    return cues
+        .map((cue) => Visibility(
+            maintainState: true,
+            maintainAnimation: true,
+            maintainSize: true,
+            visible: cue.id == 'blank' ? false : true,
+            child: getCardFormat(cue, show.getManeuver(cue.maneuver),
+                show.getCueFrames(spotIndex, cue.frames))))
+        .toList();
   }
 
   Widget getCardFormat(Cue cue, Maneuver? maneuver, String cueFrames) {
+    if (maneuver != null && maneuver.header) {
+      return HeaderCard(
+        cue: cue,
+        maneuver: maneuver,
+      );
+    } else {}
     switch (settings.cueFormat) {
       case CueFormat.singleLine:
         return CueCardSingleLine(
@@ -245,6 +252,11 @@ class ShowModel extends ChangeNotifier {
     int m = show.maneuverList
         .indexWhere((element) => element.name == maneuver.name);
     show.maneuverList[m].name = newName;
+    notifyListeners();
+  }
+
+  void toggleHeader(Maneuver maneuver, bool newvalue) {
+    show.toggleManeuverHeader(maneuver, newvalue);
     notifyListeners();
   }
 }

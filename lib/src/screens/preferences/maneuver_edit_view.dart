@@ -36,6 +36,9 @@ class _ManeuverEditViewState extends State<ManeuverEditView> {
                 label: Text('Color'),
               ),
               DataColumn(
+                label: Text('Header'),
+              ),
+              DataColumn(
                 label: Text('Delete'),
               ),
             ],
@@ -59,9 +62,8 @@ class _ManeuverEditViewState extends State<ManeuverEditView> {
                               color: Color(e.color),
                             ),
                             onTap: () async {
-                              IconData? iconData =
-                                  await FlutterIconPicker.showIconPicker(
-                                      context);
+                              IconData? iconData = await showIconPicker(context,
+                                  iconColor: Color(e.color));
                               if (iconData != null) {
                                 model.updateManeuverIcon(e, iconData);
                               }
@@ -98,12 +100,20 @@ class _ManeuverEditViewState extends State<ManeuverEditView> {
                                       ));
                             },
                           ),
+                          DataCell(Checkbox(
+                            value: e.header,
+                            onChanged: ((newvalue) {
+                              setState(() {
+                                model.toggleHeader(e, newvalue ?? false);
+                              });
+                            }),
+                          )),
                           DataCell(IconButton(
                             icon: const Icon(Icons.delete),
                             onPressed: () {
                               model.deleteManeuver(e);
                             },
-                          ))
+                          )),
                         ],
                       ),
                     )

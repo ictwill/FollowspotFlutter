@@ -53,4 +53,10 @@ class Spot {
     }
     return frames.map((e) => Text(' $e ', textScaleFactor: 0.7)).toList();
   }
+
+  Iterable<Cue> findCues(double number) {
+    return cues.where(
+      (element) => element.number == number,
+    );
+  }
 }

@@ -57,7 +57,8 @@ class CueCardMultiLine extends StatelessWidget {
                         TableRow(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 24.0, vertical: 8),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -75,14 +76,16 @@ class CueCardMultiLine extends StatelessWidget {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
                               child: Text(
                                 item.target,
                                 textAlign: TextAlign.center,
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 24.0, vertical: 8),
                               child: Text(
                                 item.size,
                                 textAlign: TextAlign.end,
@@ -96,19 +99,22 @@ class CueCardMultiLine extends StatelessWidget {
                           ),
                           children: [
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 24.0, vertical: 8),
                               child: Text(
                                   validateIntensity(intensity: item.intensity)),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
                               child: Text(
                                 frameString,
                                 textAlign: TextAlign.center,
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 24.0, vertical: 8),
                               child: Text(
                                 validateTime(time: item.time),
                                 textAlign: TextAlign.end,
@@ -122,7 +128,8 @@ class CueCardMultiLine extends StatelessWidget {
                       Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 24.0, vertical: 8),
                             child: Text(item.notes),
                           ),
                         ],

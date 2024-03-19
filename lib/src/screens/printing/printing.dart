@@ -42,16 +42,23 @@ Future<Uint8List> makePdf(
               if (indexSpot == -1)
                 for (int i = 0; i < show.spotList.length; i++)
                   Expanded(
-                    child: PrintCompactCard(show.spotList[i].findCue(e),
-                        show.getManeuver(show.spotList[i].findCue(e).maneuver)),
-                  )
+                      child: Column(
+                          children: show.spotList[i].findCues(e).map((cue) {
+                    Maneuver? m = show.getManeuver(cue.maneuver);
+                    if (m != null && m.header) {
+                      return PrintHeaderCard(cue, m);
+                    } else {
+                      return PrintCompactCard(cue, m);
+                    }
+                  }).toList()))
               else
                 Expanded(
-                  child: PrintWideCard(
-                      show.spotList[indexSpot].findCue(e),
-                      show.getManeuver(
-                          show.spotList[indexSpot].findCue(e).maneuver)),
-                )
+                    child: Column(
+                        children: show.spotList[indexSpot]
+                            .findCues(e)
+                            .map((cue) => PrintWideCard(
+                                cue, show.getManeuver(cue.maneuver)))
+                            .toList()))
             ],
           );
         }).toList();
@@ -228,6 +235,7 @@ class PrintWideCard extends StatelessWidget {
               3: const FlexColumnWidth(1.0),
               4: const FlexColumnWidth(1.0),
               5: const FlexColumnWidth(1.0),
+              6: const FlexColumnWidth(4.0),
             }, children: [
               TableRow(children: [
                 Row(mainAxisSize: MainAxisSize.min, children: [
@@ -241,6 +249,68 @@ class PrintWideCard extends StatelessWidget {
                 Text(validateIntensity(intensity: cue.intensity)),
                 Text(cue.getFrames()),
                 Text(validateTime(time: cue.time)),
+                Text(cue.notes)
+              ])
+            ]),
+          ))
+        ]),
+      );
+    }
+  }
+}
+
+///Card Printable Widget for a cue in a column
+class PrintHeaderCard extends StatelessWidget {
+  final Cue cue;
+  final Maneuver? maneuver;
+
+  PrintHeaderCard(this.cue, this.maneuver);
+
+  @override
+  Widget build(Context context) {
+    if (cue.id == 'blank') {
+      return SizedBox(height: 24);
+    } else {
+      return Container(
+        color: getPDFColor(maneuver?.color),
+        foregroundDecoration: boxDecoration,
+        child: Row(children: [
+          Container(
+            height: 24,
+            width: 32,
+            alignment: Alignment.center,
+            child: Text(deleteTrailing(cue.number),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: getPDFColor(
+                        maneuver!.getContrastingTextColor().value))),
+          ),
+          Expanded(
+              child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+            child: Table(columnWidths: <int, TableColumnWidth>{
+              0: const FlexColumnWidth(1.0),
+              1: const FlexColumnWidth(4.0),
+            }, children: [
+              TableRow(children: [
+                Row(mainAxisSize: MainAxisSize.min, children: [
+                  // Icon(const IconData(0xe530),
+                  //     color: PdfColor.fromInt(maneuver?.color ?? 0xFF77777),
+                  //     size: 12),
+                  Text(maneuver?.name ?? '-',
+                      style: TextStyle(
+                          color: getPDFColor(
+                              maneuver!.getContrastingTextColor().value))),
+                ]),
+                // Text(cue.target),
+                // Text(cue.size),
+                // Text(validateIntensity(intensity: cue.intensity)),
+                // Text(cue.getFrames()),
+                // Text(validateTime(time: cue.time)),
+                Text(cue.notes,
+                    style: TextStyle(
+                        color: getPDFColor(
+                            maneuver!.getContrastingTextColor().value)))
               ])
             ]),
           ))

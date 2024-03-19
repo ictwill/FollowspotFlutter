@@ -79,9 +79,10 @@ class SpotTabView extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Expanded(
-                              child: model.getCueCard(
+                                child: Column(
+                              children: model.getCueCards(
                                   spotIndex, model.usedNumbers[cueIndex]),
-                            ),
+                            )),
                           ],
                         );
                       },

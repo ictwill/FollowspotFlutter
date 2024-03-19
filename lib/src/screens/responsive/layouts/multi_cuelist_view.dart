@@ -45,22 +45,22 @@ class MultiCueListView extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              restorationId: 'spotListView',
-              itemCount: model.usedNumbers.length,
-              padding: const EdgeInsets.all(24.0),
-              itemBuilder: (BuildContext context, int index) {
-                final number = model.usedNumbers[index];
-                return Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    for (int i = 0; i < model.show.spotList.length; i++)
-                      Expanded(child: model.getCueCard(i, number))
-                  ],
-                );
-              },
-            ),
-          ),
+              child: ListView.builder(
+                  restorationId: 'spotListView',
+                  itemCount: model.usedNumbers.length,
+                  padding: const EdgeInsets.all(24.0),
+                  itemBuilder: (BuildContext context, int index) {
+                    final number = model.usedNumbers[index];
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (int i = 0; i < model.show.spotList.length; i++)
+                          Expanded(
+                              child: Column(
+                                  children: model.getCueCards(i, number)))
+                      ],
+                    );
+                  })),
         ],
       ),
     );

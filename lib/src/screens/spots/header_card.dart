@@ -5,21 +5,20 @@ import '../../models/cue.dart';
 import '../../models/maneuver.dart';
 import '../edit_cue/cue_edit_form.dart';
 
-class CueCardSingleLine extends StatelessWidget {
-  const CueCardSingleLine({
+class HeaderCard extends StatelessWidget {
+  const HeaderCard({
     Key? key,
-    required this.item,
+    required this.cue,
     required this.maneuver,
-    required this.frameString,
   }) : super(key: key);
 
-  final Cue item;
-  final String frameString;
+  final Cue cue;
   final Maneuver? maneuver;
 
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: maneuver?.getColor(),
       borderOnForeground: false,
       elevation: 4,
       clipBehavior: Clip.antiAlias,
@@ -28,7 +27,7 @@ class CueCardSingleLine extends StatelessWidget {
           showModalBottomSheet<void>(
             context: context,
             builder: (BuildContext context) {
-              return CueEditForm(cue: item);
+              return CueEditForm(cue: cue);
             },
           );
         },
@@ -38,10 +37,9 @@ class CueCardSingleLine extends StatelessWidget {
             Container(
               width: 88.0,
               alignment: Alignment.center,
-              color: maneuver?.getColor(),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(deleteTrailing(item.number),
+                child: Text(deleteTrailing(cue.number),
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.titleMedium!.copyWith(
                         color: maneuver?.getContrastingTextColor() ??
@@ -66,32 +64,10 @@ class CueCardSingleLine extends StatelessWidget {
                 ],
               ),
             ),
-            Expanded(flex: 2, child: Text(item.target)),
-            Expanded(
-                flex: 2,
-                child: Text(
-                  item.size,
-                  textAlign: TextAlign.center,
-                )),
-            Expanded(
-                child: Text(
-              validateIntensity(intensity: item.intensity),
-              textAlign: TextAlign.center,
-            )),
-            Expanded(
-              flex: 2,
-              child: Text(frameString),
-            ),
-            Expanded(
-                child: Text(
-              validateTime(time: item.time),
-              textAlign: TextAlign.center,
-            )),
             Expanded(
               flex: 3,
-              child: Text(item.notes),
+              child: Text(cue.notes),
             ),
-            const SizedBox(width: 16.0),
           ],
         ),
       ),
