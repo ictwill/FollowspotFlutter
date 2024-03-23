@@ -259,4 +259,15 @@ class ShowModel extends ChangeNotifier {
     show.toggleManeuverHeader(maneuver, newvalue);
     notifyListeners();
   }
+
+  String updateTarget(String e, String value) {
+    show.updateTarget(e, value);
+    notifyListeners();
+    return value;
+  }
+
+  void deleteTarget(String e) {
+    show.deleteTarget(e);
+    notifyListeners();
+  }
 }

@@ -13,12 +13,14 @@ class Show {
   final ShowInfo info;
   List<Spot> spotList;
   List<Maneuver> maneuverList;
+  List<String> targets;
 
   Show(
       {this.filename,
       this.id = -1,
       required this.info,
       this.spotList = const <Spot>[],
+      this.targets = const <String>[],
       this.maneuverList = const <Maneuver>[]});
 
   factory Show.fromJson(Map<String, dynamic> json) => _$ShowFromJson(json);
@@ -79,6 +81,38 @@ class Show {
   void toggleManeuverHeader(Maneuver maneuver, bool newvalue) {
     int i = maneuverList.indexOf(maneuver);
     maneuverList.elementAt(i).header = newvalue;
+  }
+
+  void addTarget(String name) {
+    var newList = targets.toList(growable: true);
+    if (!targets.contains(name)) newList.add(name);
+    newList.sort();
+    targets = newList;
+  }
+
+  bool deleteTarget(String name) {
+    return targets.remove(name);
+  }
+
+  String getTarget(String name) {
+    if (!targets.contains(name)) {
+      addTarget(name);
+    }
+    return name;
+  }
+
+  void updateTarget(String old, String value) {
+    deleteTarget(old);
+    addTarget(value);
+    replaceAllTargets(old, value);
+  }
+
+  void replaceAllTargets(String old, String value) {
+    for (var spot in spotList) {
+      for (var cue in spot.cues) {
+        if (cue.target == old) cue.target = value;
+      }
+    }
   }
 }
 

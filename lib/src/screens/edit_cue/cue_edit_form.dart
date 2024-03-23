@@ -27,7 +27,7 @@ class CueEditForm extends StatelessWidget {
               number: double.tryParse(_formKey.currentState!.value['number']) ??
                   0.0,
               maneuver: cue.maneuver,
-              target: _formKey.currentState!.value['target'],
+              target: cue.target,
               time: int.tryParse(_formKey.currentState!.value['time']),
               size: _formKey.currentState!.value['size'],
               intensity:
@@ -119,11 +119,26 @@ class CueEditForm extends StatelessWidget {
                             cue.maneuver = model.show.getManeuver(value)?.name,
                       ),
                     ),
-                    FormBuilderTextField(
-                      name: 'target',
-                      decoration: const InputDecoration(label: Text('Target')),
-                      textCapitalization: TextCapitalization.words,
-                      initialValue: cue.target,
+                    Autocomplete<String>(
+                      key: const Key('target'),
+                      initialValue: TextEditingValue(text: cue.target),
+                      optionsBuilder: (textEditingValue) => model.show.targets
+                          .where((element) => element
+                              .toLowerCase()
+                              .contains(textEditingValue.text.toLowerCase())),
+                      onSelected: (option) =>
+                          cue.target = model.show.getTarget(option),
+                      fieldViewBuilder: (context, textEditingController,
+                              focusNode, onFieldSubmitted) =>
+                          TextField(
+                        textCapitalization: TextCapitalization.words,
+                        decoration:
+                            const InputDecoration(label: Text('Target')),
+                        controller: textEditingController,
+                        focusNode: focusNode,
+                        onSubmitted: (value) =>
+                            cue.target = model.updateTarget(cue.target, value),
+                      ),
                     ),
                     FormBuilderTextField(
                       name: 'intensity',

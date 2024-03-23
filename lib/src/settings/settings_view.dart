@@ -3,9 +3,16 @@ import 'package:followspot_application_1/src/screens/preferences/app_settings_vi
 import 'package:followspot_application_1/src/screens/preferences/maneuver_edit_view.dart';
 import 'package:followspot_application_1/src/screens/preferences/show_info_edit_view.dart';
 import 'package:followspot_application_1/src/screens/preferences/spot_color_edit_view.dart';
+import 'package:followspot_application_1/src/screens/preferences/targets_edit_view.dart';
 import 'package:followspot_application_1/src/settings/settings_controller.dart';
 
-enum SettingPages { appSettings, showinfo, spotcolor, maneuvers }
+enum SettingPages {
+  appSettings,
+  showinfo,
+  targets,
+  spotcolor,
+  maneuvers,
+}
 
 class SettingsView extends StatefulWidget {
   const SettingsView(
@@ -64,6 +71,11 @@ class _SettingsViewState extends State<SettingsView> {
           text: 'Show Info',
           icon: Icon(Icons.edit_document),
         );
+      case SettingPages.targets:
+        return const Tab(
+          text: 'Cast List',
+          icon: Icon(Icons.person),
+        );
       case SettingPages.spotcolor:
         return const Tab(
           text: 'Spot Color',
@@ -86,6 +98,8 @@ class _SettingsViewState extends State<SettingsView> {
     switch (value) {
       case SettingPages.showinfo:
         return ShowInfoEditView();
+      case SettingPages.targets:
+        return const TargetsEditView();
       case SettingPages.spotcolor:
         return SpotColorEditView();
       case SettingPages.maneuvers:
