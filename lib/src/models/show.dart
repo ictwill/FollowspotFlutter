@@ -64,9 +64,7 @@ class Show {
         (element) => element.name.toLowerCase() == maneuver.name.toLowerCase());
   }
 
-  void deleteManeuver(Maneuver maneuver) {
-    maneuverList.remove(maneuver);
-  }
+  void deleteManeuver(Maneuver maneuver) => maneuverList.remove(maneuver);
 
   String getCueFrames(int spotIndex, List<int> frames) {
     String string = frames.map((frame) {
@@ -83,36 +81,33 @@ class Show {
     maneuverList.elementAt(i).header = newvalue;
   }
 
-  void addTarget(String name) {
+  String addTarget(String name) {
     var newList = targets.toList(growable: true);
     if (!targets.contains(name)) newList.add(name);
     newList.sort();
     targets = newList;
-  }
-
-  bool deleteTarget(String name) {
-    return targets.remove(name);
-  }
-
-  String getTarget(String name) {
-    if (!targets.contains(name)) {
-      addTarget(name);
-    }
     return name;
   }
 
-  void updateTarget(String old, String value) {
+  bool deleteTarget(String name) => targets.remove(name);
+
+  int updateTarget(String old, String value) {
     deleteTarget(old);
     addTarget(value);
-    replaceAllTargets(old, value);
+    return replaceAllTargets(old, value);
   }
 
-  void replaceAllTargets(String old, String value) {
+  int replaceAllTargets(String old, String value) {
+    int count = 0;
     for (var spot in spotList) {
       for (var cue in spot.cues) {
-        if (cue.target == old) cue.target = value;
+        if (cue.target == old) {
+          cue.target = value;
+          count++;
+        }
       }
     }
+    return count;
   }
 }
 

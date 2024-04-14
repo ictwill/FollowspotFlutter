@@ -7,18 +7,15 @@ part 'maneuver.g.dart';
 class Maneuver {
   String name;
   int color;
-  String? iconName;
   int? iconCodePoint;
   bool header;
   String? fontFamily;
 
-  IconData iconData;
+  // IconData iconData;
 
   Maneuver({
     required this.name,
     this.color = 0xFF777777,
-    this.iconData = Icons.square,
-    this.iconName = '',
     this.iconCodePoint,
     this.header = false,
     this.fontFamily = 'material',

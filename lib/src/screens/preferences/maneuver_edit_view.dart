@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
+import 'package:followspot_application_1/src/screens/preferences/icon_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/show_model.dart';
@@ -62,11 +63,15 @@ class _ManeuverEditViewState extends State<ManeuverEditView> {
                               color: Color(e.color),
                             ),
                             onTap: () async {
-                              IconData? iconData = await showIconPicker(context,
-                                  iconColor: Color(e.color));
-                              if (iconData != null) {
-                                model.updateManeuverIcon(e, iconData);
-                              }
+                              IconData result = await showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                        title: const Text('Select an Icon'),
+                                        content: IconPicker(
+                                            iconColor: Color(e.color)),
+                                      ));
+                              print(result);
+                              model.updateManeuverIcon(e, result);
                             },
                           ),
                           DataCell(

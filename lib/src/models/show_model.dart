@@ -111,7 +111,7 @@ class ShowModel extends ChangeNotifier {
   void updateManeuverIcon(Maneuver maneuver, IconData iconData) {
     int m = show.maneuverList
         .indexWhere((element) => element.name == maneuver.name);
-    show.maneuverList[m].iconData = iconData;
+    // show.maneuverList[m].iconData = iconData;
     show.maneuverList[m].fontFamily = iconData.fontFamily;
     show.maneuverList[m].iconCodePoint = iconData.codePoint;
     notifyListeners();
@@ -261,13 +261,18 @@ class ShowModel extends ChangeNotifier {
   }
 
   String updateTarget(String e, String value) {
-    show.updateTarget(e, value);
+    int count = show.updateTarget(e, value);
     notifyListeners();
+    print(count);
     return value;
   }
 
   void deleteTarget(String e) {
     show.deleteTarget(e);
     notifyListeners();
+  }
+
+  String addTarget(String value) {
+    return show.addTarget(value);
   }
 }

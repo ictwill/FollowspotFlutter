@@ -127,7 +127,7 @@ class CueEditForm extends StatelessWidget {
                               .toLowerCase()
                               .contains(textEditingValue.text.toLowerCase())),
                       onSelected: (option) =>
-                          cue.target = model.show.getTarget(option),
+                          cue.target = model.show.addTarget(option),
                       fieldViewBuilder: (context, textEditingController,
                               focusNode, onFieldSubmitted) =>
                           TextField(
@@ -137,7 +137,7 @@ class CueEditForm extends StatelessWidget {
                         controller: textEditingController,
                         focusNode: focusNode,
                         onSubmitted: (value) =>
-                            cue.target = model.updateTarget(cue.target, value),
+                            cue.target = model.addTarget(value),
                       ),
                     ),
                     FormBuilderTextField(

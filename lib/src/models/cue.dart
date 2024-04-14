@@ -1,3 +1,4 @@
+import 'package:flutter_iconpicker/extensions/string_extensions.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'cue.g.dart';
@@ -39,4 +40,12 @@ class Cue {
   Map<String, dynamic> toJson() => _$CueToJson(this);
 
   String getFrames() => frames.map((e) => e + 1).join(' + ');
+
+  double height() {
+    if (notes.isBlank) {
+      return 16 * 2;
+    } else {
+      return 16 * 3;
+    }
+  }
 }

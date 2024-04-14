@@ -1,9 +1,11 @@
 // import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_iconpicker/extensions/string_extensions.dart';
 // import 'package:flutter/widgets.dart' as mt;
 import 'package:flutter_to_pdf/args/color.dart';
 import 'package:followspot_application_1/src/data/gel_colors.dart';
 import 'package:followspot_application_1/src/models/spot.dart';
+import 'package:followspot_application_1/src/screens/preferences/icon_names.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 import 'package:printing/printing.dart';
@@ -149,19 +151,28 @@ class PrintCompactCard extends StatelessWidget {
     if (cue.id == 'blank') {
       return Spacer();
     } else {
+      PdfColor color = getPDFColor(maneuver?.color);
+      PdfColor textColor =
+          getPDFColor(maneuver!.getContrastingTextColor().value);
       return Container(
         foregroundDecoration: boxDecoration,
         child: Row(children: [
           Container(
             decoration: BoxDecoration(
-              color: getPDFColor(maneuver?.color),
+              color: color,
             ),
-            height: 46,
+            height: cue.height(),
             width: 32,
             alignment: Alignment.center,
-            child:
-                Text(deleteTrailing(cue.number), textAlign: TextAlign.center),
+            child: Text(deleteTrailing(cue.number),
+                textAlign: TextAlign.center,
+                style: TextStyle(color: textColor)),
           ),
+          if (maneuver?.iconCodePoint != null)
+            Icon(IconData(iconNames[maneuver!.iconCodePoint]!),
+                color: getPDFColor(maneuver!.color))
+          else
+            Spacer(),
           Expanded(
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,7 +183,6 @@ class PrintCompactCard extends StatelessWidget {
                   2: const FlexColumnWidth(1.0),
                 }, children: [
                   TableRow(children: [
-                    // Text(maneuver.iconData.codePoint.toString()),
                     paddedText(maneuver?.name ?? '-', TextAlign.start),
                     paddedText(cue.target, TextAlign.center),
                     paddedText(cue.size, TextAlign.end),
@@ -186,16 +196,18 @@ class PrintCompactCard extends StatelessWidget {
                         paddedText(validateTime(time: cue.time), TextAlign.end),
                       ]),
                 ]),
-                paddedText(cue.notes, TextAlign.start)
+                if (cue.notes.isNotBlank) paddedText(cue.notes, TextAlign.start)
               ]))
         ]),
       );
     }
   }
 
-  Padding paddedText(String text, TextAlign textAlign) {
-    return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 4.0),
+  Widget paddedText(String text, TextAlign textAlign) {
+    return Container(
+        height: 16,
+        alignment: AlignmentDirectional.center,
+        padding: const EdgeInsets.symmetric(vertical: 1.25, horizontal: 4.0),
         child: Text(text, textAlign: textAlign));
   }
 }
@@ -211,6 +223,8 @@ class PrintWideCard extends StatelessWidget {
   Widget build(Context context) {
     if (cue.id == 'blank') {
       return SizedBox(height: 24);
+    } else if (maneuver!.header) {
+      return PrintHeaderCard(cue, maneuver);
     } else {
       return Container(
         foregroundDecoration: boxDecoration,
@@ -229,24 +243,28 @@ class PrintWideCard extends StatelessWidget {
               child: Container(
             padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
             child: Table(columnWidths: <int, TableColumnWidth>{
-              0: const FlexColumnWidth(2.0),
-              1: const FlexColumnWidth(2.0),
-              2: const FlexColumnWidth(2.0),
-              3: const FlexColumnWidth(1.0),
-              4: const FlexColumnWidth(1.0),
-              5: const FlexColumnWidth(1.0),
-              6: const FlexColumnWidth(4.0),
+              0: const FlexColumnWidth(0.5), //Icon
+              1: const FlexColumnWidth(2.0), //Action
+              2: const FlexColumnWidth(1.0), //Intensity
+              3: const FlexColumnWidth(2.0), //Target
+              4: const FlexColumnWidth(1.0), //Size
+              5: const FlexColumnWidth(1.0), //Frames
+              6: const FlexColumnWidth(1.0), //Timing
+              7: const FlexColumnWidth(4.0), //Notes
             }, children: [
               TableRow(children: [
-                Row(mainAxisSize: MainAxisSize.min, children: [
-                  // Icon(const IconData(0xe530),
-                  //     color: PdfColor.fromInt(maneuver?.color ?? 0xFF77777),
-                  //     size: 12),
-                  Text(maneuver?.name ?? '-'),
-                ]),
+                if (maneuver?.iconCodePoint != null)
+                  Icon(
+                    IconData(iconNames[maneuver!.iconCodePoint]!),
+                    color: getPDFColor(maneuver!.color),
+                    size: 16,
+                  )
+                else
+                  Spacer(),
+                Text(maneuver?.name ?? '-'),
+                Text(validateIntensity(intensity: cue.intensity)),
                 Text(cue.target),
                 Text(cue.size),
-                Text(validateIntensity(intensity: cue.intensity)),
                 Text(cue.getFrames()),
                 Text(validateTime(time: cue.time)),
                 Text(cue.notes)
@@ -271,8 +289,12 @@ class PrintHeaderCard extends StatelessWidget {
     if (cue.id == 'blank') {
       return SizedBox(height: 24);
     } else {
+      PdfColor color = getPDFColor(maneuver?.color);
+      PdfColor textColor =
+          getPDFColor(maneuver!.getContrastingTextColor().value);
+
       return Container(
-        color: getPDFColor(maneuver?.color),
+        color: color,
         foregroundDecoration: boxDecoration,
         child: Row(children: [
           Container(
@@ -281,9 +303,7 @@ class PrintHeaderCard extends StatelessWidget {
             alignment: Alignment.center,
             child: Text(deleteTrailing(cue.number),
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: getPDFColor(
-                        maneuver!.getContrastingTextColor().value))),
+                style: TextStyle(color: textColor)),
           ),
           Expanded(
               child: Container(
@@ -298,19 +318,14 @@ class PrintHeaderCard extends StatelessWidget {
                   //     color: PdfColor.fromInt(maneuver?.color ?? 0xFF77777),
                   //     size: 12),
                   Text(maneuver?.name ?? '-',
-                      style: TextStyle(
-                          color: getPDFColor(
-                              maneuver!.getContrastingTextColor().value))),
+                      style: TextStyle(color: textColor)),
                 ]),
                 // Text(cue.target),
                 // Text(cue.size),
                 // Text(validateIntensity(intensity: cue.intensity)),
                 // Text(cue.getFrames()),
                 // Text(validateTime(time: cue.time)),
-                Text(cue.notes,
-                    style: TextStyle(
-                        color: getPDFColor(
-                            maneuver!.getContrastingTextColor().value)))
+                Text(cue.notes, style: TextStyle(color: textColor))
               ])
             ]),
           ))
@@ -323,13 +338,16 @@ class PrintHeaderCard extends StatelessWidget {
 PdfColor getPDFColor(int? color) {
   PdfColor color0 = PdfColor.fromInt(color ?? 0xFF777777);
   if (color0.isDark) {
-    return color0.shade(.3);
+    return color0.shade(.4);
   } else {
     return color0;
   }
 }
 
 Future<PageTheme> myPageTheme(PdfPageFormat format) async {
+  // final materialIcons =
+  //     await rootBundle.load("assets/fonts/MaterialIcons-Regular.ttf");
+  // final materialFont = Font.ttf(materialIcons);
   return PageTheme(
     pageFormat: format,
     theme: ThemeData.withFont(
